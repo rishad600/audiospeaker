@@ -12,7 +12,7 @@ import {Observable} from 'rxjs/Rx';
   styleUrls: ['app.component.css']
 })
 export class AppComponent {
-     
+    public title:any; 
     public realdata:any = [];
     public presActive: Boolean;
     public selectStartIndex:number;
