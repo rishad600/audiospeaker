@@ -1,0 +1,25 @@
+<input type="text" id="tracktime" [(ngModel)]="time" (ngModelChange)="UpdateSelection();" />
+<p class="passage-audio" >
+    <audio id="passage-audio" class="passage" controls ontimeupdate="document.getElementById('tracktime').value = this.currentTime ;">
+        <!-- @todo WebM? -->
+        <source src="Luke.2.1-Luke.2.20.mp3" type="audio/mp3">
+        <em class="error"><strong>Error:</strong> Your browser doesn't appear to support HTML5 Audio.</em>
+    </audio>
+</p>
+<input type="button" value="Cut" (click)="cut();" *ngIf="cliplength==0">
+<input type="button" value="paste" (click)="paste();" *ngIf="cliplength>0">
+
+<div class="textholder" >
+   press {{presActive}}
+   <br/>
+   release {{presActive}}
+   first:{{selectStartIndex}}<br/>
+   last:{{selectlastIndex}}<br/>
+   {{clipboard|json}}
+
+
+<p class="noselect">
+   <app-word (draggedStart)="press(i)" (drawshade)="dragged(i)" (clickToClear)="clickToClear(i);" (draggedEnded)="released(i)"  *ngFor="let item of realdata; let i = index" [data]="item"> </app-word >
+</p>
+
+</div>

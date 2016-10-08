@@ -1,0 +1,29 @@
+.textholder{
+
+    width:800px;
+    height:400px;
+    word-wrap: break-word;
+
+
+}
+
+p{
+     width:800px;
+    height:auto;      
+    word-wrap: break-word;
+
+}
+
+p.chosen{
+    background-color: blue; 
+}
+.noselect {
+    padding: 0 1px;
+    cursor: text;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

@@ -1,0 +1,9 @@
+.selected {
+    color:red;
+    background: yellow;
+    cursor: pointer;
+}
+
+.audioSelected{
+    border: 1px solid #CFCFCF;
+}
