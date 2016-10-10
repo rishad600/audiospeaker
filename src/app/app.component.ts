@@ -26,6 +26,7 @@ export class AppComponent {
     public currenttimeStamp;
     public _current_end_select_timeout_id:any = null;
     public _current_next_select_timeout_id: any = null;
+    public _current_next_select_timeout_id_clear: any = null;
 
 
     public player:any;
@@ -67,8 +68,11 @@ export class AppComponent {
                 (currentTime < this.realdata[i][3])
             );
             if (is_current_word) {
-                let word = this.realdata[i][5] = true;
-                   this.makeSelection(i,time);
+                if(this.realdata[i+1])
+                if(this.realdata[i+1][5] == false) {
+                     this.realdata[i][5] = true;
+                    this.makeSelection(i,time);
+                } 
                 break;
             }   
         }   
@@ -77,22 +81,34 @@ export class AppComponent {
         var seconds_until_this_word_ends = this.realdata[i][3] - time; 
         // automatically clear the selection
         clearTimeout(this._current_end_select_timeout_id);
-        this._current_end_select_timeout_id = setTimeout(()=>{this.realdata[i][5] = false},Math.max(seconds_until_this_word_ends * 1000, 0));
+        this._current_end_select_timeout_id = setTimeout(()=>{
+            for (let k = 0, len = i; k < len; k += 1) { 
+                this.realdata[k][5] = false    
+            }
+        },Math.max(this.realdata[i][2] * 1000, 0));
 
+        setInterval(()=> {
+            for (let k = 0, len = i; k < len; k += 1) { 
+                this.realdata[k][5] = false  
+            }
+        },100);
 
         //since the sampleing time is very low, we have to make sure that it is taken care of
         //get the next word
+        
         var next_word = this.realdata[i + 1];
-        if (next_word) {
-            let seconds_until_next_word_begins = next_word.begin - time;
+        if(next_word)
+        if (next_word && next_word[2] < .255) {
+            let seconds_until_next_word_begins = next_word[2]
             clearTimeout(this._current_next_select_timeout_id);
                 this._current_next_select_timeout_id = setTimeout(
-                    function () {
+                    (i) => {
                         next_word[5] = true
-                    },
-                    Math.max(seconds_until_next_word_begins * 1000, 0)
+                    },i,
+                    Math.max(next_word[2] * 1000, 0)
                 );
-        } 
+         }
+
 
     }
 
@@ -127,6 +143,8 @@ export class AppComponent {
     cut() {
       this.cliplength = this.clipboard.end-this.clipboard.start+1;
       this.copiedData = this.realdata.splice(this.clipboard.start,this.cliplength);
+      
+
     }
 
     paste() {
