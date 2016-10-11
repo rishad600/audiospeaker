@@ -34,9 +34,19 @@ export class AppComponent {
 
     constructor(public audioData: AudioDataService) {
         for (let audioIndex in audioData.audioData) {
+
             audioData.audioData[audioIndex].push(false);
             audioData.audioData[audioIndex].push(false)
-            this.realdata.push(audioData.audioData[audioIndex])
+            let TypeCasted = [
+                audioData.audioData[audioIndex],
+                Number(audioData.audioData[audioIndex][1]),
+                Number(audioData.audioData[audioIndex][2]),
+                Number(audioData.audioData[audioIndex][3]),
+                audioData.audioData[audioIndex][4],
+                audioData.audioData[audioIndex][5]
+              ]
+
+            this.realdata.push(TypeCasted)
         }
     }
     getTimeElapsed(value) {
