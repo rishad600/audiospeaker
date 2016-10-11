@@ -2,7 +2,7 @@
   
 <p class="passage-audio" >
 
-    <app-player (timestampemit)="getTimeName($event)" [track]="realdata"></app-player>
+    <app-player (timestampemit)="speechhightlight($event)" [track]="realdata"></app-player>
 </p>
 <!--   -->
 <input type="button" value="Cut" (click)="cut();" *ngIf="cliplength==0">

@@ -19,6 +19,7 @@ export class PlayerComponent implements OnInit {
     public windowAudio:any;
     public currentGain = 0;;
     public gainNode;
+    public timeOutId: any = [];
     constructor() { }
 
     ngOnInit() {
@@ -44,31 +45,32 @@ export class PlayerComponent implements OnInit {
         request.send();
     }
     
-    gainToZero() {
-        this.currentGain = 0;
-        //this.gainNode.gain.setValueAtTime(currGain, audioCtx.currentTime)
-    }
-    gainToOne() {
-        this.currentGain = 1;   
-       // gainNode.gain.setValueAtTime(currGain, audioCtx.currentTime )
-    }
-    // play() {
-       
-    // }
-
     start(track) {
         let i = track.track;
         let source = track.source;
-        source.start(0,i[1],i[2]);        
+        track.obser.emit(i[1]);
+        source.start(0,i[1],i[2]);  
     }
-
+    emit(time) {
+        this.timestampemit.emit(time);
+    }
+    clearAllPreviousId() {
+        for(let ids of this.timeOutId) {
+            window.clearTimeout(ids);
+        }
+    }
     play() {
+            this.timestampemit.emit(1);
+            this.clearAllPreviousId();           
+            this.context.onaudioprocess = this.emit;
             for (let k = 0, len = this.track.length; k < len; k += 1) { 
                 let source = this.context.createBufferSource(); 
                 source.buffer = this.audioBuffer;
                 source.connect(this.context.destination);
-                setTimeout(this.start, this.track[k][1]*1000,{track:this.track[k],source:source});
+                let id = setTimeout(this.start, this.track[k][1]*1000,{track:this.track[k],source:source,index:k,obser:this.timestampemit,context:this.context});
+                this.timeOutId.push(id);
             }
         }
+
 
 }

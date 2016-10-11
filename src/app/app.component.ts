@@ -38,7 +38,7 @@ export class AppComponent {
             audioData.audioData[audioIndex].push(false);
             audioData.audioData[audioIndex].push(false)
             let TypeCasted = [
-                audioData.audioData[audioIndex],
+                audioData.audioData[audioIndex][0],
                 Number(audioData.audioData[audioIndex][1]),
                 Number(audioData.audioData[audioIndex][2]),
                 Number(audioData.audioData[audioIndex][3]),
@@ -65,26 +65,14 @@ export class AppComponent {
         console.log(i);
     }
     speechhightlight(time) {
-        
         let currentTime = time;
         for (let i = 0, len = this.realdata.length; i < len; i += 1) { 
-            let is_current_word = (
-                (
-                    currentTime >= this.realdata[i][1]
-                    &&
-                    currentTime < this.realdata[i][3]
-                )
-                ||
-                (currentTime < this.realdata[i][3])
-            );
-            if (is_current_word) {
-                if(this.realdata[i+1])
-                if(this.realdata[i+1][5] == false) {
-                     this.realdata[i][5] = true;
-                    this.makeSelection(i,time);
-                } 
+            if(this.realdata[i][1] == time) {
+                if(i>0)
+                this.realdata[i-1][5] =false;
+                this.realdata[i][5] = true;
                 break;
-            }   
+            }            
         }   
     }
     makeSelection(i,time) {
