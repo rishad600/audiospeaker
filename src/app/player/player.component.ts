@@ -32,6 +32,9 @@ export class PlayerComponent implements OnInit {
           alert('Web Audio API is not supported in this browser');
         }
     }
+    ngOnChanges(changes) {
+        this.track = changes.track.currentValue;
+    }
     loadAudio() {
       this.context = new AudioContext();
       var request = new XMLHttpRequest();
@@ -67,7 +70,7 @@ export class PlayerComponent implements OnInit {
                 let source = this.context.createBufferSource(); 
                 source.buffer = this.audioBuffer;
                 source.connect(this.context.destination);
-                let id = setTimeout(this.start, this.track[k][1]*1000,{track:this.track[k],source:source,index:k,obser:this.timestampemit,context:this.context});
+                let id = setTimeout(this.start, this.track[k][6]*1000,{track:this.track[k],source:source,index:k,obser:this.timestampemit,context:this.context});
                 this.timeOutId.push(id);
             }
         }

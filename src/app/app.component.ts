@@ -30,150 +30,157 @@ export class AppComponent {
 
 
     public player:any;
-    
+
 
     constructor(public audioData: AudioDataService) {
-        for (let audioIndex in audioData.audioData) {
-
-            audioData.audioData[audioIndex].push(false);
-            audioData.audioData[audioIndex].push(false)
-            let TypeCasted = [
-                audioData.audioData[audioIndex][0],
-                Number(audioData.audioData[audioIndex][1]),
-                Number(audioData.audioData[audioIndex][2]),
-                Number(audioData.audioData[audioIndex][3]),
-                audioData.audioData[audioIndex][4],
-                audioData.audioData[audioIndex][5]
-              ]
-
-            this.realdata.push(TypeCasted)
+           
+        let startTime ;;
+        if(this.audioData.audioData.words[0]['time']>0) {
+            startTime = 0;
         }
-    }
-    getTimeElapsed(value) {
-        this.speechhightlight(value);
-    }
+        for (let i = 0, len = this.audioData.audioData.words.length; i < len; i += 1) { 
+             
+             if(startTime != this.audioData.audioData.words[i]['time']) {
+                 //insert and empty array 
+                 if (this.audioData.audioData.words[i+1]) {
+                       let empty = {
+                                 'name' : '',
+                                 'duration': this.audioData.audioData.words[i]['time'],
+                                 'time' : startTime,
+                                 'read': false,
+                                 'hightlight': false,
+                             }
+                         this.realdata.push(empty);
+                         startTime =   this.audioData.audioData.words[i+1]['time'];
+                 }
+             }else {
+                 let data = {
+                                 'name' : this.audioData.audioData.words[i]['name'],
+                                 'duration': this.audioData.audioData.words[i]['duration'],
+                                 'time' : this.audioData.audioData.words[i]['time'],
+                                 'read': false,
+                                 'hightlight': false,
+                             } 
+                       startTime =   this.audioData.audioData.words[i]['time'];
+                       this.realdata.push(data);      
+             }
 
-    press(i) {
-        this.presActive = true;
-        this.selectStartIndex = i;
-    }
-    checkIfPlaying() {
 
-    }
 
-    updateTime(i) {
-        console.log(i);
-    }
-    speechhightlight(time) {
-        let currentTime = time;
-        for (let i = 0, len = this.realdata.length; i < len; i += 1) { 
-            if(this.realdata[i][1] == time) {
-                if(i>0)
-                this.realdata[i-1][5] =false;
-                this.realdata[i][5] = true;
-                break;
-            }            
-        }   
-    }
-    makeSelection(i,time) {
-        var seconds_until_this_word_ends = this.realdata[i][3] - time; 
-        // automatically clear the selection
-        clearTimeout(this._current_end_select_timeout_id);
-        this._current_end_select_timeout_id = setTimeout(()=>{
-            for (let k = 0, len = i; k < len; k += 1) { 
-                this.realdata[k][5] = false    
-            }
-        },Math.max(this.realdata[i][2] * 1000, 0));
-
-        setInterval(()=> {
-            for (let k = 0, len = i; k < len; k += 1) { 
-                this.realdata[k][5] = false  
-            }
-        },100);
-
-        //since the sampleing time is very low, we have to make sure that it is taken care of
-        //get the next word
-        
-        var next_word = this.realdata[i + 1];
-        if(next_word)
-        if (next_word && next_word[2] < .255) {
-            let seconds_until_next_word_begins = next_word[2]
-            clearTimeout(this._current_next_select_timeout_id);
-                this._current_next_select_timeout_id = setTimeout(
-                    (i) => {
-                        next_word[5] = true
-                    },i,
-                    Math.max(next_word[2] * 1000, 0)
-                );
          }
+        //     console.log(this.realdata);
 
+        //     // audioData.audioData[audioIndex].push(false);
+        //     // audioData.audioData[audioIndex].push(false)
+            
 
+        //     // let TypeCasted = [
+        //     //     audioData.audioData[audioIndex][0],
+        //     //     Number(audioData.audioData[audioIndex][1]),
+        //     //     Number(audioData.audioData[audioIndex][2]),
+        //     //     Number(audioData.audioData[audioIndex][3]),
+        //     //     audioData.audioData[audioIndex][4],
+        //     //     audioData.audioData[audioIndex][5],
+        //     //     audioData.audioData[audioIndex][1]
+        //     //   ]
+        //     // this.realdata.push(TypeCasted)
+        // //}
     }
 
-    audio() {
-        this.player = (<HTMLInputElement>document.getElementById('passage-audio'));
-        this.player.play();
-        this.player.ontimeupdate = this.speechhightlight;
+    // press(i) {
+    //     this.presActive = true;
+    //     this.selectStartIndex = i;
+    // }
 
-    }
-    
-    dragged(i) {
-      this.selectlastIndex = i;
-       if(this.presActive ==true)
-        this.colorSelections();     
-    }
-    colorSelections() {
-      for(let i=0;i < this.realdata.length;i++) {
-        if(i>= this.selectStartIndex && i<= this.selectlastIndex )
-        this.realdata[i][4] = true;
-        else
-          this.realdata[i][4] = false;
-      }
-    }
+    // speechhightlight(time) {
+    //     let currentTime = time;
+    //     for (let i = 0, len = this.realdata.length; i < len; i += 1) { 
+    //         if(this.realdata[i][1] == time) {
+    //             if(i>0)
+    //             this.realdata[i-1][5] =false;
+    //             this.realdata[i][5] = true;
+    //             break;
+    //         }            
+    //     }   
+    // }
 
-    released(i) {
-      this.presActive = false;  
-      this.clipboard = {start:this.selectStartIndex,end:this.selectlastIndex };
-      this.selectStartIndex = undefined;
-      this.selectlastIndex = undefined;
-    }
-    
-    cut() {
-      this.cliplength = this.clipboard.end-this.clipboard.start+1;
-      this.copiedData = this.realdata.splice(this.clipboard.start,this.cliplength);
-      
+    // dragged(i) {
+    //   this.selectlastIndex = i;
+    //    if(this.presActive ==true)
+    //     this.colorSelections();     
+    // }
+    // colorSelections() {
+    //   for(let i=0;i < this.realdata.length;i++) {
+    //     if(i>= this.selectStartIndex && i<= this.selectlastIndex )
+    //     this.realdata[i][4] = true;
+    //     else
+    //       this.realdata[i][4] = false;
+    //   }
+    // }
 
-    }
+    // released(i) {
+    //     this.presActive = false;  
+    //     this.clipboard = {start:this.selectStartIndex,end:this.selectlastIndex };
+    //     this.selectStartIndex = undefined;
+    //     this.selectlastIndex = undefined;
+    // }
 
-    paste() {
-       for(let ind of this.copiedData) {
-         this.realdata.splice(this.selectStartIndex+1,0,ind);
-       }
-    }
+    // cut() {
+    //     this.cliplength = this.clipboard.end-this.clipboard.start+1;
+    //     this.copiedData = this.realdata.splice(this.clipboard.start,this.cliplength);
+    // }
 
-    clickToClear(i) {
-      this.selectStartIndex = i;
-      this.selectlastIndex = i;
-       this.colorSelections();  
-    }
+    // paste() {
+    //     for(let i=this.copiedData.length-1;i>=0;i--)  {
+    //         this.realdata.splice(this.selectStartIndex+1,0,this.copiedData[i]);
+    //     }
+    //     let newData = [];
+    //     let startTime = this.realdata[0][1];
+    //     let duration = 0;
+    //     console.log(this.realdata);
+    //     for (let l = 0, len = this.realdata.length; l < len; l += 1) { 
+    //            if(this.realdata[l] != undefined){
+    //               let diff:number = this.realdata[l][3] - this.realdata[l][1]; 
+    //                 diff = +diff.toFixed(3);
+    //                newData.push ([
+    //                    this.realdata[l][0],
+    //                    this.realdata[l][1],
+    //                    this.realdata[l][2],
+    //                    this.realdata[l][1]+this.realdata[l][2],
+    //                    this.realdata[l][4],
+    //                    this.realdata[l][5],
+    //                    Number(startTime.toFixed(3) + diff.toFixed(3))
+    //                ])     
+    //               //console.log(Number(startTime.toFixed(3) + diff.toFixed(3)));
+    //            }
+               
+    //        startTime = startTime+this.realdata[l][2];
+    //        startTime = Number(startTime.toFixed(3));
+    //     }
+    //     this.realdata = newData;
+    //     this.copiedData = [];
+    //     this.clipboard.end = this.clipboard.start =0;
+    //    // console.log(this.realdata);
+    //     // console.log(this.realdata);
+    // }
 
-    UpdateSelection(time) {
-        console.log(time);
-    }
-    
+    // clickToClear(i) {
+    //     this.selectStartIndex = i;
+    //     this.selectlastIndex = i;
+    //     this.colorSelections();  
+    // }
 
-    send(i) {
-      if(this.presActive == true ) {
-        this.selectStartIndex = i;
-      }
-      if(this.presActive == true) {
-        this.selectlastIndex = i;
-      }
+    // UpdateSelection(time) {
+    //     console.log(time);
+    // }
 
-    }
+    // send(i) {
+    //     if(this.presActive == true ) {
+    //         this.selectStartIndex = i;
+    //     }
+    //     if(this.presActive == true) {
+    //         this.selectlastIndex = i;
+    //     }
 
-
-
-
-
+    // }
 }

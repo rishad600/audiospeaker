@@ -1,8 +1,5 @@
-<input type="text" id="tracktime" [(ngModel)]="time" (draggedEnded)="updateTime(i)" (ngModelChange)="UpdateSelection();" />
-  
 <p class="passage-audio" >
-
-    <app-player (timestampemit)="speechhightlight($event)" [track]="realdata"></app-player>
+    <app-player *ngIf="realdata" (timestampemit)="speechhightlight($event)" [track]="realdata"></app-player>
 </p>
 <!--   -->
 <input type="button" value="Cut" (click)="cut();" *ngIf="cliplength==0">
@@ -18,8 +15,8 @@
    {{clipboard|json}}
 
 
-<p class="noselect">
-   <app-word (draggedStart)="press(i)" (drawshade)="dragged(i)" (clickToClear)="clickToClear(i);" (draggedEnded)="released(i)"  *ngFor="let item of realdata; let i = index" [data]="item"> </app-word >
+<p class="noselect" *ngIf="realdata">
+   <app-word   (draggedStart)="press(i)" (drawshade)="dragged(i)" (clickToClear)="clickToClear(i);" (draggedEnded)="released(i)"  *ngFor="let item of realdata; let i = index" [data]="item"> </app-word >
 </p>
 
 </div>
