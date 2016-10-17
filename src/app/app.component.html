@@ -2,21 +2,16 @@
     <app-player *ngIf="realdata" (timestampemit)="speechhightlight($event)" [track]="realdata"></app-player>
 </p>
 <!--   -->
-<input type="button" value="Cut" (click)="cut();" *ngIf="cliplength==0">
-<input type="button" value="paste" (click)="paste();" *ngIf="cliplength>0">
+<input type="button" value="Cut" (click)="cut();" *ngIf="dragStartIndex>0 && dragEndIndex>0 && !pasteBin">
+<input type="button" value="Clear Selection" (click)="clear();" *ngIf="dragStartIndex>0 && dragEndIndex>0">
+<input type="button" value="paste" (click)="paste();" *ngIf="pasteBin">
 {{currenttimeStamp}}
 
 <div class="textholder" >
-   press {{presActive}}
-   <br/>
-   release {{presActive}}
-   first:{{selectStartIndex}}<br/>
-   last:{{selectlastIndex}}<br/>
-   {{clipboard|json}}
-
-
-<p class="noselect" *ngIf="realdata">
-   <app-word   (draggedStart)="press(i)" (drawshade)="dragged(i)" (clickToClear)="clickToClear(i);" (draggedEnded)="released(i)"  *ngFor="let item of realdata; let i = index" [data]="item"> </app-word >
-</p>
+start selection {{dragStartIndex}}
+end selection {{dragEndIndex}}
+    <p class="noselect" *ngIf="realdata">
+       <app-word   (clickEvent)="clickEvent($event);" (selection)="selection(i)" (draggedEnded)="draggedEnded(i)" (draggedStart)="draggedStart(i)" *ngFor="let item of realdata; let i = index" [data]="item"> </app-word >
+    </p>
 
 </div>

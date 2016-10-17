@@ -1,6 +1,10 @@
 import { Component, OnInit,EventEmitter,Output,Input} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
+
+
+declare const Recorder: any;
 declare const window;
+declare const navigator:any;
 @Component({
   moduleId: module.id,
   selector: 'app-player',
@@ -20,9 +24,14 @@ export class PlayerComponent implements OnInit {
     public currentGain = 0;;
     public gainNode;
     public timeOutId: any = [];
+    public recroderObj:any;
     constructor() { }
 
     ngOnInit() {
+        navigator.getUserMedia({audio: true}, this.record, function(e) {
+          console.log('d');
+        });
+
          try {
          this.windowAudio = window.AudioContext||window.webkitAudioContext;
           this.context = new AudioContext();
@@ -32,8 +41,17 @@ export class PlayerComponent implements OnInit {
           alert('Web Audio API is not supported in this browser');
         }
     }
+    record(context) {
+
+        let rec = new Recorder(context);
+        rec.record();
+        //rec.stop();
+
+
+    }
     ngOnChanges(changes) {
         this.track = changes.track.currentValue;
+        //console.log(this.track);
     }
     loadAudio() {
       this.context = new AudioContext();
@@ -51,28 +69,34 @@ export class PlayerComponent implements OnInit {
     start(track) {
         let i = track.track;
         let source = track.source;
-        track.obser.emit(i[1]);
-        source.start(0,i[1],i[2]);  
+        source.start(0,i.time,i.duration);  
+        track.obser.emit(i.time);
     }
-    emit(time) {
-        this.timestampemit.emit(time);
-    }
+    
     clearAllPreviousId() {
         for(let ids of this.timeOutId) {
             window.clearTimeout(ids);
         }
     }
     play() {
-            this.timestampemit.emit(1);
-            this.clearAllPreviousId();           
-            this.context.onaudioprocess = this.emit;
-            for (let k = 0, len = this.track.length; k < len; k += 1) { 
-                let source = this.context.createBufferSource(); 
-                source.buffer = this.audioBuffer;
-                source.connect(this.context.destination);
-                let id = setTimeout(this.start, this.track[k][6]*1000,{track:this.track[k],source:source,index:k,obser:this.timestampemit,context:this.context});
-                this.timeOutId.push(id);
-            }
+            this.clearAllPreviousId();
+            var frameCount = this.context.sampleRate * 2.0;
+            let myAudioBuffer = this.context.createBuffer(1, frameCount, this.context.sampleRate);
+               
+            let nowBuffering = myAudioBuffer.getChannelData(0);    
+            for (var i = 0; i < this.context.sampleRate * 2.0; i++) {
+                nowBuffering[i] = Math.random() * 2 - 1;
+            }    
+            var source = this.context.createBufferSource();
+            source.buffer = myAudioBuffer;
+            source.connect(this.context.destination);
+            source.start();
+
+            // for (let k = 0, len = this.track.length; k < len; k += 1) { 
+            //     let timer = (this.track[k].setTime*1000)|0 ;
+            //     let id = setTimeout(this.start, timer,{track:this.track[k],source:source,index:k,obser:this.timestampemit,context:this.context});
+            //     this.timeOutId.push(id);
+            // }
         }
 
 

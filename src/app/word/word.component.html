@@ -1,3 +1,3 @@
-<span (click)="select();" *ngIf="data" class="spanClass" [ngClass]="{'selected':data[4],'audioSelected':data[5] }" (mouseup)="mouseup()" (mousemove)="mousemove()" (mousedown)="mouseOvered();">
-  {{data[0]}} 
+<span class="spanClass" [ngClass]="{'selected':data.hightlight,'audioSelected':data.read }"   *ngIf="data"  (click)="select();" (mousemove)="mousemove()" (mouseup)="mouseup()"  (mousedown)="mousedown();">
+  {{data.name}} 
 </span>

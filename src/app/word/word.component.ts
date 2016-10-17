@@ -12,8 +12,8 @@ export class WordComponent implements OnInit {
   @Input() data; 
   @Output() draggedStart= new EventEmitter();
   @Output() draggedEnded= new EventEmitter();
-  @Output() drawshade= new EventEmitter();
-  @Output() clickToClear = new EventEmitter();
+  @Output() selection= new EventEmitter();
+  @Output() clickEvent = new EventEmitter();
    public selected:boolean = false;
  
   constructor() { }
@@ -21,19 +21,18 @@ export class WordComponent implements OnInit {
   ngOnInit() {
     
   }
-  
   select() {
-      this.clickToClear.emit(1);
+      this.clickEvent.emit(this.data);
   }
-  mouseOvered() {
-      this.draggedStart.emit(1);  
+  mousedown() {
+      this.draggedStart.emit(this.data);  
   }
   mouseup() {
-    this.draggedEnded.emit(0);  
+    this.draggedEnded.emit(this.data);  
   }
 
   mousemove() {
-    this.drawshade.emit(1);
+    this.selection.emit(this.data);
   }
 
 }
