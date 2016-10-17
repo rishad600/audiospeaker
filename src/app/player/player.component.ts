@@ -24,15 +24,13 @@ export class PlayerComponent implements OnInit {
     public currentGain = 0;;
     public gainNode;
     public timeOutId: any = [];
-    public recroderObj:any;
+    public ReadlAudioBuffer: any;
+    public recroderObj: any;
+    public source;
     constructor() { }
 
     ngOnInit() {
-        navigator.getUserMedia({audio: true}, this.record, function(e) {
-          console.log('d');
-        });
-
-         try {
+        try {
          this.windowAudio = window.AudioContext||window.webkitAudioContext;
           this.context = new AudioContext();
           this.loadAudio();
@@ -40,14 +38,6 @@ export class PlayerComponent implements OnInit {
         catch(e) {
           alert('Web Audio API is not supported in this browser');
         }
-    }
-    record(context) {
-
-        let rec = new Recorder(context);
-        rec.record();
-        //rec.stop();
-
-
     }
     ngOnChanges(changes) {
         this.track = changes.track.currentValue;
@@ -60,7 +50,8 @@ export class PlayerComponent implements OnInit {
         request.responseType = 'arraybuffer';
         request.onload = () => {
             this.context.decodeAudioData(request.response,(buffer) => {
-                this.audioBuffer  = buffer;           
+                this.ReadlAudioBuffer  = buffer.getChannelData(0);    
+                this.fillBuffer();       
             });
         }
         request.send();
@@ -79,46 +70,37 @@ export class PlayerComponent implements OnInit {
         }
     }
 
-    getData() {
-        
-      source = audioCtx.createBufferSource();
-      var request = new XMLHttpRequest();
-      request.open('GET', 'viper.ogg', true);
-      request.responseType = 'arraybuffer';
-      request.onload = function() {
-      var audioData = request.response;
-        audioCtx.decodeAudioData(audioData, function(buffer) {
-            source.buffer = buffer;
-            source.connect(audioCtx.destination);
-            source.loop = true;
-          },
+    getStartIndex(index) {
 
-          function(e){"Error with decoding audio data" + e.err});
+    }
+    pushToBuffer(index,time) {
+        let i =  this.context.sampleRate*time.
 
-  }
-
-  request.send();
-}
-    play() {
-            this.clearAllPreviousId();
-            var frameCount = this.context.sampleRate * 2.0;
-            let myAudioBuffer = this.context.createBuffer(1, frameCount, this.context.sampleRate);
-               
-            let nowBuffering = myAudioBuffer.getChannelData(0);    
-            for (var i = 0; i < this.context.sampleRate * 2.0; i++) {
-                nowBuffering[i] = Math.random() * 2 - 1;
-            }    
-            var source = this.context.createBufferSource();
-            source.buffer = myAudioBuffer;
-            source.connect(this.context.destination);
-            source.start();
-
-            // for (let k = 0, len = this.track.length; k < len; k += 1) { 
-            //     let timer = (this.track[k].setTime*1000)|0 ;
-            //     let id = setTimeout(this.start, timer,{track:this.track[k],source:source,index:k,obser:this.timestampemit,context:this.context});
-            //     this.timeOutId.push(id);
-            // }
+        for (i = 0; i < frameCountPerSecond; i++) {
+            nowBuffering[i] = this.ReadlAudioBuffer[i];
         }
+
+        this.source = this.context.createBufferSource();
+        this.source.buffer = myAudioBuffer;
+        this.source.connect(this.context.destination);
+        this.source.start();
+    }
+    fillBuffer() {
+        let frameCountPerSecond = this.context.sampleRate*time.time|0;
+        let myAudioBuffer = this.context.createBuffer(1, this.context.sampleRate,this.context.sampleRate);
+        let nowBuffering = myAudioBuffer.getChannelData(0); 
+        
+        //for(let time of this.track ) {
+            // this.pushToBuffer(this.track[1]);
+            // this.pushToBuffer(this.track[2]);
+            this.pushToBuffer(4,this.track[4]);
+            //break;
+        //}
+    }
+    
+    play() {
+        this.loadAudio();
+    }
 
 
 }
