@@ -26,6 +26,7 @@ export class PlayerComponent implements OnInit {
     public timeOutId: any = [];
     public ReadlAudioBuffer: any;
     public recroderObj: any;
+    public nowBuffering: any;
     public source;
     constructor() { }
 
@@ -74,28 +75,23 @@ export class PlayerComponent implements OnInit {
 
     }
     pushToBuffer(index,time) {
-        let i =  this.context.sampleRate*time.
-
-        for (i = 0; i < frameCountPerSecond; i++) {
-            nowBuffering[i] = this.ReadlAudioBuffer[i];
+        let framestart =  this.context.sampleRate*(time.time);
+        let frameend =  this.context.sampleRate*(time.time+time.duration);
+        for (let i = framestart; i < frameend; i++) {
+            this.nowBuffering[i] = this.ReadlAudioBuffer[i];
         }
-
+    }
+    fillBuffer() {
+        
+        let myAudioBuffer = this.context.createBuffer(1, this.context.sampleRate*12,this.context.sampleRate);
+        this.nowBuffering = myAudioBuffer.getChannelData(0); 
+        for(let index in this.track ) {
+            this.pushToBuffer(index,this.track[index]);
+        }
         this.source = this.context.createBufferSource();
         this.source.buffer = myAudioBuffer;
         this.source.connect(this.context.destination);
         this.source.start();
-    }
-    fillBuffer() {
-        let frameCountPerSecond = this.context.sampleRate*time.time|0;
-        let myAudioBuffer = this.context.createBuffer(1, this.context.sampleRate,this.context.sampleRate);
-        let nowBuffering = myAudioBuffer.getChannelData(0); 
-        
-        //for(let time of this.track ) {
-            // this.pushToBuffer(this.track[1]);
-            // this.pushToBuffer(this.track[2]);
-            this.pushToBuffer(4,this.track[4]);
-            //break;
-        //}
     }
     
     play() {
