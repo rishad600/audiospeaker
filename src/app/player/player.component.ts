@@ -1,5 +1,6 @@
 import { Component, OnInit,EventEmitter,Output,Input} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
+import {ProgressComponent} from '../progress/progress.component';
 
 
 declare const Recorder: any;
@@ -9,40 +10,36 @@ declare const navigator:any;
   moduleId: module.id,
   selector: 'app-player',
   templateUrl: 'player.component.html',
+  directives: [ProgressComponent],
   styleUrls: ['player.component.css']
 })
-export class PlayerComponent implements OnInit {
+export class PlayerComponent {
 
     @Output() timestampemit = new EventEmitter();
     @Input() track;
-    public currentTime;
     public context: any;;
     public audioBuffer:any;
-    public player;
-    public timer:any = [];
-    public windowAudio:any;
-    public currentGain = 0;;
-    public gainNode;
-    public timeOutId: any = [];
     public ReadlAudioBuffer: any;
-    public recroderObj: any;
     public nowBuffering: any;
     public nowBufferingIndex: number = 0;
     public source;
+    public isPlaying: boolean = false;
+    public audioLength: number = 0;
+    public isSuspended: boolean = false;
     constructor() { }
 
     ngOnInit() {
         try {
-         this.windowAudio = window.AudioContext||window.webkitAudioContext;
+          window.AudioContext||window.webkitAudioContext;
           this.context = new AudioContext();
         }
         catch(e) {
           alert('Web Audio API is not supported in this browser');
         }
+        this.loadAudio();
     }
     ngOnChanges(changes) {
         this.track = changes.track.currentValue;
-        //console.log(this.track);
     }
     loadAudio() {
       this.context = new AudioContext();
@@ -58,19 +55,6 @@ export class PlayerComponent implements OnInit {
         request.send();
     }
     
-    start(track) {
-        let i = track.track;
-        let source = track.source;
-        source.start(0,i.time,i.duration);  
-        track.obser.emit(i.time);
-    }
-    
-    clearAllPreviousId() {
-        for(let ids of this.timeOutId) {
-            window.clearTimeout(ids);
-        }
-    }
-
     pushToBuffer(index,time) {
         let framestart =  (Number(this.context.sampleRate)* Number(time.time))|0;
         let frameend =  (Number(this.context.sampleRate)*(Number(time.time) + Number(time.duration)))|0;
@@ -80,7 +64,10 @@ export class PlayerComponent implements OnInit {
         }
     }
     fillBuffer() {
-        let myAudioBuffer = this.context.createBuffer(1, this.context.sampleRate*12,this.context.sampleRate);
+
+        let lastElement  = this.track[this.track.length-1];
+        this.audioLength = Math.ceil(Number(lastElement.time)+ Number(lastElement.duration));
+        let myAudioBuffer = this.context.createBuffer(1, this.context.sampleRate*this.audioLength,this.context.sampleRate);
         this.nowBuffering = myAudioBuffer.getChannelData(0); 
         for(let index in this.track) {
             this.pushToBuffer(index,this.track[index]);
@@ -88,12 +75,29 @@ export class PlayerComponent implements OnInit {
         this.source = this.context.createBufferSource();
         this.source.buffer = myAudioBuffer;
         this.source.connect(this.context.destination);
-        this.source.start();
+    }
+    stop() {
+        this.source.stop();
+        this.isPlaying = false;
     }
     
     play() {
-        this.nowBufferingIndex = 0;
-       this.loadAudio();
+        if(this.isPlaying){
+            if (this.isSuspended ==true) {
+                this.isSuspended = false;
+                this.context.resume();
+            } else {
+                this.isSuspended = true;
+                this.context.suspend();
+            }
+            
+        } else {
+            this.isPlaying = true;
+            this.isSuspended = false;
+            this.source.start();
+        }
+
+        
     }
 
 

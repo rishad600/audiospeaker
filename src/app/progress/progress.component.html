@@ -1,0 +1,11 @@
+<div class="player">
+    <p class="message"></p>
+    <div class="controls">
+      <button class="button fa fa-play"></button>
+      <div class="track">
+        <div class="progress"></div>
+        <div class="scrubber" [ngClass]="{'isPlaying':isPlaying}" [ngStyle]="{'left': percentage+'px'}"></div>
+      </div>
+    </div>
+  </div>
+ 

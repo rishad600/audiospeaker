@@ -1,9 +1,7 @@
-<audio id="passage-audio"  class="passage" controls >
-        <source src="Luke.2.1-Luke.2.20.mp3" type="audio/mp3">
-        <em class="error"><strong>Error:</strong> Your browser doesn't appear to support HTML5 Audio.</em>
-</audio>
+
+<app-progress [isPlaying]="isPlaying" [player]="source" [length]="audioLength"></app-progress>
 
 
-{{player}}
-<input type="button" (click)="play()" value="audio">
+<input type="button" (click)="play()" [attr.value]="(isPlaying && !isSuspended)?'Pause':'play'">
+<input type="button" (click)="stop()" value="Stop">
 <input type="button" (click)="record()" value="record">
