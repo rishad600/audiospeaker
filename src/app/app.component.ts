@@ -71,6 +71,7 @@ export class AppComponent {
         for(let i=this.pasteBin.length-1;i>=0;i--)  {
             this.realdata.splice(this.dragStartIndex+1,0,this.pasteBin[i]);
         }
+        this.realdata = [...this.realdata.slice(0, 1),this.realdata[1],...this.realdata.slice(2)]
     }
 
     speechhightlight(time) {

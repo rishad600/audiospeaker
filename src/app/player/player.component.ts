@@ -13,7 +13,7 @@ declare const navigator:any;
   directives: [ProgressComponent],
   styleUrls: ['player.component.css']
 })
-export class PlayerComponent {
+export class PlayerComponent  implements OnInit{
 
     @Output() timestampemit = new EventEmitter();
     @Input() track;
@@ -39,8 +39,15 @@ export class PlayerComponent {
         this.loadAudio();
     }
     ngOnChanges(changes) {
-        this.track = changes.track.currentValue;
+        if(changes.track.currentValue){
+            this.track = changes.track.currentValue; 
+            if(this.ReadlAudioBuffer) {
+                this.nowBufferingIndex = 0;
+                this.fillBuffer();
+            }
+        }
     }
+
     loadAudio() {
       this.context = new AudioContext();
       var request = new XMLHttpRequest();
@@ -64,7 +71,6 @@ export class PlayerComponent {
         }
     }
     fillBuffer() {
-
         let lastElement  = this.track[this.track.length-1];
         this.audioLength = Math.ceil(Number(lastElement.time)+ Number(lastElement.duration));
         let myAudioBuffer = this.context.createBuffer(1, this.context.sampleRate*this.audioLength,this.context.sampleRate);
