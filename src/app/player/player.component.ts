@@ -79,6 +79,9 @@ export class PlayerComponent {
     stop() {
         this.source.stop();
         this.isPlaying = false;
+        this.nowBufferingIndex = 0;
+        this.fillBuffer();
+
     }
     
     play() {
