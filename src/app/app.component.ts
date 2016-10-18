@@ -72,12 +72,12 @@ export class AppComponent {
             this.realdata.splice(this.dragStartIndex+1,0,this.pasteBin[i]);
         }
         //reorder 
-        let nextime:any = 0;
-        for (let l = 0, len = this.realdata.length; l < len; l += 1) { 
-                this.realdata[l]['time'] = nextime;
-                 nextime = +this.realdata[l]['time'] + +this.realdata[l]['duration']
-                 nextime = nextime.toFixed(3);
-         }
+        // let nextime:any = 0;
+        // for (let l = 0, len = this.realdata.length; l < len; l += 1) { 
+        //         this.realdata[l]['time'] = nextime;
+        //          nextime = +this.realdata[l]['time'] + +this.realdata[l]['duration']
+        //          nextime = nextime.toFixed(3);
+        //  }
          
     }
 

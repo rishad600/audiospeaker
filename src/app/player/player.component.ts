@@ -27,6 +27,7 @@ export class PlayerComponent implements OnInit {
     public ReadlAudioBuffer: any;
     public recroderObj: any;
     public nowBuffering: any;
+    public nowBufferingIndex: number = 0;
     public source;
     constructor() { }
 
@@ -34,7 +35,6 @@ export class PlayerComponent implements OnInit {
         try {
          this.windowAudio = window.AudioContext||window.webkitAudioContext;
           this.context = new AudioContext();
-          this.loadAudio();
         }
         catch(e) {
           alert('Web Audio API is not supported in this browser');
@@ -71,21 +71,18 @@ export class PlayerComponent implements OnInit {
         }
     }
 
-    getStartIndex(index) {
-
-    }
     pushToBuffer(index,time) {
-        let framestart =  this.context.sampleRate*(time.time);
-        let frameend =  this.context.sampleRate*(time.time+time.duration);
+        let framestart =  (Number(this.context.sampleRate)* Number(time.time))|0;
+        let frameend =  (Number(this.context.sampleRate)*(Number(time.time) + Number(time.duration)))|0;
         for (let i = framestart; i < frameend; i++) {
-            this.nowBuffering[i] = this.ReadlAudioBuffer[i];
+            this.nowBuffering[this.nowBufferingIndex]  = this.ReadlAudioBuffer[i];
+            this.nowBufferingIndex++;
         }
     }
     fillBuffer() {
-        
         let myAudioBuffer = this.context.createBuffer(1, this.context.sampleRate*12,this.context.sampleRate);
         this.nowBuffering = myAudioBuffer.getChannelData(0); 
-        for(let index in this.track ) {
+        for(let index in this.track) {
             this.pushToBuffer(index,this.track[index]);
         }
         this.source = this.context.createBufferSource();
@@ -95,7 +92,8 @@ export class PlayerComponent implements OnInit {
     }
     
     play() {
-        this.loadAudio();
+        this.nowBufferingIndex = 0;
+       this.loadAudio();
     }
 
 
