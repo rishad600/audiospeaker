@@ -76,9 +76,12 @@ export class AppComponent {
 
     speechhightlight(time) {
         for (let i = 0, len = this.realdata.length; i < len; i += 1) { 
-            if(this.realdata[i].time == time) {
+            let endtime  = Number(this.realdata[i].time)+Number(this.realdata[i].duration);
+            if(this.realdata[i].time >= time && time <  endtime) {
                 if(i>0)
                 this.realdata[i-1].read =false;
+                if(i>2)
+                this.realdata[i-2].read =false;
                 this.realdata[i].read = true;
                 break;
             }            
@@ -106,8 +109,8 @@ export class AppComponent {
             startTime = this.audioData.audioData.words[0]['time'];
         }
         for (let i = 0, len = this.audioData.audioData.words.length; i < len; i += 1) { 
-            //this.checkBlankAudio(this.audioData.audioData.words[i-1],this.audioData.audioData.words[i],this.audioData.audioData.words[i+1]);     
-            this.createArray(new ReadData(this.audioData.audioData.words[i]['0'] ,this.audioData.audioData.words[i]['2'],this.audioData.audioData.words[i]['1'],false,false,this.audioData.audioData.words[i]['1']));
+            this.checkBlankAudio(this.audioData.audioData.words[i-1],this.audioData.audioData.words[i],this.audioData.audioData.words[i+1]);     
+            this.createArray(new ReadData(this.audioData.audioData.words[i]['name'] ,this.audioData.audioData.words[i]['duration'],this.audioData.audioData.words[i]['time'],false,false,this.audioData.audioData.words[i]['1']));
          }
     }
 }

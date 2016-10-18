@@ -1,4 +1,4 @@
-import { Component, OnInit, Input} from '@angular/core';
+import { Component, OnInit, Input,EventEmitter,Output} from '@angular/core';
 declare const window;
 
 @Component({
@@ -12,20 +12,26 @@ export class ProgressComponent {
     @Input() isPlaying;
     @Input() player;
     @Input() length;
+    @Output() timestampemit = new EventEmitter();
+    public playedTime: number =0;
     public timer: any;
     public percentage:any = 0;
     constructor() { }
     ngOnChanges(changes) {
        if(changes && changes.isPlaying){
-           if(changes.isPlaying.currentValue ==true) this.showProgress();
+           if(changes.isPlaying.currentValue ==true) {
+             this.playedTime = 0; 
+             this.showProgress();
+           }
            else this.stopTimer();
        }
     }
     showProgress() {
        this.timer =  setInterval(() => {
-           if(this.player)
-            this.updateProgress(this.player.context.currentTime); 
-        },300)
+           if(this.player){
+               this.updateProgress(this.player.context.currentTime); 
+           }
+        },1000)
     }
     stopTimer() {
         window.clearInterval(this.timer);
@@ -33,8 +39,9 @@ export class ProgressComponent {
     updateProgress(time) {
         time = Number(time);
         this.percentage = (time/this.length)*100;
-        // this.percentage  = this.percentage;
-        
+        if(this.percentage >100) {
+          this.stopTimer();
+        }
     }
 }
 

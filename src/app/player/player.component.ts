@@ -61,6 +61,9 @@ export class PlayerComponent  implements OnInit{
         }
         request.send();
     }
+    highlight(time) {
+        this.timestampemit.emit(time);
+    }
     
     pushToBuffer(index,time) {
         let framestart =  (Number(this.context.sampleRate)* Number(time.time))|0;
@@ -99,7 +102,6 @@ export class PlayerComponent  implements OnInit{
                 this.isSuspended = true;
                 this.context.suspend();
             }
-            
         } else {
             this.isPlaying = true;
             this.isSuspended = false;
