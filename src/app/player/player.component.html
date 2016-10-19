@@ -1,5 +1,5 @@
 
-<app-progress [isPlaying]="isPlaying" [player]="source" (timestampemit)="highlight($event);"[length]="audioLength"></app-progress>
+<app-progress [isPlaying]="isPlaying" [player]="source" [length]="audioLength"></app-progress>
 
 
 <input type="button" (click)="play()" [attr.value]="(isPlaying && !isSuspended)?'Pause':'play'">

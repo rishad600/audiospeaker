@@ -26,6 +26,7 @@ export class PlayerComponent  implements OnInit{
     public isPlaying: boolean = false;
     public audioLength: number = 0;
     public isSuspended: boolean = false;
+    public timeOutId: any = [];
     constructor() { }
 
     ngOnInit() {
@@ -61,9 +62,6 @@ export class PlayerComponent  implements OnInit{
         }
         request.send();
     }
-    highlight(time) {
-        this.timestampemit.emit(time);
-    }
     
     pushToBuffer(index,time) {
         let framestart =  (Number(this.context.sampleRate)* Number(time.time))|0;
@@ -90,7 +88,15 @@ export class PlayerComponent  implements OnInit{
         this.isPlaying = false;
         this.nowBufferingIndex = 0;
         this.fillBuffer();
-
+    }
+    starthightlighting(track) {
+        track.obser.emit(track.track.time);
+    }
+    highlight() {
+        for (let k = 0, len = this.track.length; k < len; k += 1) { 
+            let id = setTimeout(this.starthightlighting, this.track[k]['time']*1000,{track:this.track[k],index:k,obser:this.timestampemit,context:this.context});
+            this.timeOutId.push(id);
+        }
     }
     
     play() {
@@ -103,12 +109,13 @@ export class PlayerComponent  implements OnInit{
                 this.context.suspend();
             }
         } else {
+            this.highlight();
             this.isPlaying = true;
             this.isSuspended = false;
             this.source.start();
+            
+            
         }
-
-        
     }
 
 

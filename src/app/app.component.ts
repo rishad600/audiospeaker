@@ -76,8 +76,7 @@ export class AppComponent {
 
     speechhightlight(time) {
         for (let i = 0, len = this.realdata.length; i < len; i += 1) { 
-            let endtime  = Number(this.realdata[i].time)+Number(this.realdata[i].duration);
-            if(this.realdata[i].time >= time && time <  endtime) {
+            if(this.realdata[i].time == time) {
                 if(i>0)
                 this.realdata[i-1].read =false;
                 if(i>2)
@@ -98,19 +97,19 @@ export class AppComponent {
                 let duration = (pres.time  - +preEndtime).toFixed(3);
                 this.insertBlankRow("",duration,preEndtime);    
             }
+        } 
+        if(!prev) {
+            this.insertBlankRow("",pres.time,0);    
         }
     }
     createArray(newrow) {
         this.realdata = [...this.realdata,newrow];
     }
     getAndArrageData() {
-        let startTime ;
-        if(this.audioData.audioData.words[0]['time']>0) {
-            startTime = this.audioData.audioData.words[0]['time'];
-        }
         for (let i = 0, len = this.audioData.audioData.words.length; i < len; i += 1) { 
             this.checkBlankAudio(this.audioData.audioData.words[i-1],this.audioData.audioData.words[i],this.audioData.audioData.words[i+1]);     
             this.createArray(new ReadData(this.audioData.audioData.words[i]['name'] ,this.audioData.audioData.words[i]['duration'],this.audioData.audioData.words[i]['time'],false,false,this.audioData.audioData.words[i]['1']));
          }
+         console.log(this.realdata);
     }
 }

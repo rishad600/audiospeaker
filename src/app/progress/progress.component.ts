@@ -12,7 +12,6 @@ export class ProgressComponent {
     @Input() isPlaying;
     @Input() player;
     @Input() length;
-    @Output() timestampemit = new EventEmitter();
     public playedTime: number =0;
     public timer: any;
     public percentage:any = 0;
