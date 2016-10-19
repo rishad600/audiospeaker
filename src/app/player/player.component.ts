@@ -1,5 +1,6 @@
 import { Component, OnInit,EventEmitter,Output,Input} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
+import {DomSanitizationService} from '@angular/platform-browser';
 import {ProgressComponent} from '../progress/progress.component';
 
 
@@ -29,7 +30,10 @@ export class PlayerComponent  implements OnInit{
     public isSuspended: boolean = false;
     public timeOutId: any = [];
     public lastSelected: any;
-    constructor() { }
+    public rec: any;
+    public recorderArray:any = [];
+    public recordStatus: boolean = false;
+    constructor(public sanitizer: DomSanitizationService) { }
 
     ngOnInit() {
         try {
@@ -50,6 +54,29 @@ export class PlayerComponent  implements OnInit{
             }
         }
     }
+    record() {
+        this.rec = new Recorder(this.source);
+        this.rec.record();
+        this.recordStatus = true;
+    }
+
+    stopRecord() {
+        this.rec.stop();
+        this.recordStatus = false;
+        this.createDownloadLink();
+    }
+    createDownloadLink() {
+        console.log('create download');
+        this.rec.exportWAV((blob)=>{
+            console.log(blob);
+            let data = {
+                download: new Date().getTime()+".wav",
+                href: this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob))    
+            }
+            this.recorderArray.push(data);
+        })
+    }
+
 
     loadAudio() {
       this.context = new AudioContext();
