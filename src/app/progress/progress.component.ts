@@ -10,39 +10,27 @@ declare const window;
 export class ProgressComponent {
     
     @Input() isPlaying;
-    @Input() player;
-    @Input() length;
+    @Input() track;
+    @Input() progress;
     public playedTime: number =0;
     public timer: any;
     public percentage:any = 0;
     constructor() { }
-    ngOnChanges(changes) {
-       this.percentage = 0;
-       if(changes && changes.isPlaying){
-           if(changes.isPlaying.currentValue ==true) {
-             this.playedTime = 0; 
-             this.showProgress();
-           }
-           else this.stopTimer();
-       }
-    }
-    showProgress() {
-       this.timer =  setInterval(() => {
-           if(this.player){
-               this.updateProgress(this.player.context.currentTime); 
-           }
-        },1000)
-    }
+    // ngOnChanges(changes) {
+    //    this.percentage = 0;
+    //    if(changes && changes.isPlaying){
+    //        if(changes.isPlaying.currentValue ==true) {
+    //          this.playedTime = 0; 
+    //          this.showProgress();
+    //        }
+    //        else this.stopTimer();
+    //    }
+    // }
+    
     stopTimer() {
         window.clearInterval(this.timer);
         this.percentage = 0;
     }
-    updateProgress(time) {
-        time = Number(time);
-        this.percentage = (time/this.length)*100;
-        if(this.percentage >100) {
-          this.stopTimer();
-        }
-    }
+    
 }
 
