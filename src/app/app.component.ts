@@ -77,7 +77,6 @@ export class AppComponent {
             this.realdata[i].setTime  = Number(time);
         }
         this.realdata = [...this.realdata.slice(0, 1),this.realdata[1],...this.realdata.slice(2)]
-        console.log(this.realdata);
     }
 
     speechhightlight(time) {
