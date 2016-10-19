@@ -101,7 +101,7 @@ export class PlayerComponent  implements OnInit{
     }
     highlight() {
         for (let k = 0, len = this.track.length; k < len; k += 1) { 
-            let id = setTimeout(this.starthightlighting, this.track[k]['time']*1000,{track:this.track[k],index:k,obser:this.timestampemit,context:this.context});
+            let id = setTimeout(this.starthightlighting, this.track[k]['setTime']*1000,{track:this.track[k],index:k,obser:this.timestampemit,context:this.context});
             this.timeOutId.push(id);
         }
     }

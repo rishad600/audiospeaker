@@ -4,7 +4,7 @@ export class ReadData {
     public time:string;
     public read:boolean;
     public hightlight:boolean;
-    public setTime:boolean;
+    public setTime:number;
     constructor(name,duration,time,read,hightlight,setTime) {
         this.name = name;
         this.duration = duration;
