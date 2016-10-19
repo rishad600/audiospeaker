@@ -88,6 +88,13 @@ export class PlayerComponent  implements OnInit{
         this.isPlaying = false;
         this.nowBufferingIndex = 0;
         this.fillBuffer();
+        for(let index of this.timeOutId){
+            window.clearInterval(index);
+        }
+        for (let k = 0, len = this.track.length; k < len; k += 1) { 
+            this.track[k].hightlight = false;
+            this.track[k].read = false;
+        }
     }
     starthightlighting(track) {
         track.obser.emit(track.track.time);
