@@ -17,6 +17,7 @@ export class ProgressComponent {
     public percentage:any = 0;
     constructor() { }
     ngOnChanges(changes) {
+       this.percentage = 0;
        if(changes && changes.isPlaying){
            if(changes.isPlaying.currentValue ==true) {
              this.playedTime = 0; 
@@ -34,6 +35,7 @@ export class ProgressComponent {
     }
     stopTimer() {
         window.clearInterval(this.timer);
+        this.percentage = 0;
     }
     updateProgress(time) {
         time = Number(time);

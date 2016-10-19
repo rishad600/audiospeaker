@@ -107,13 +107,17 @@ export class PlayerComponent  implements OnInit{
     }
     
     play() {
-        if(this.isPlaying){
+        if(this.isPlaying) {
             if (this.isSuspended ==true) {
                 this.isSuspended = false;
                 this.context.resume();
+                this.highlight();
             } else {
                 this.isSuspended = true;
                 this.context.suspend();
+                for(let index of this.timeOutId){
+                    window.clearInterval(index);
+                }
             }
         } else {
             this.highlight();
