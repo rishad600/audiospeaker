@@ -1,6 +1,6 @@
 
 <app-progress [isPlaying]="isPlaying" [player]="source" [length]="audioLength"></app-progress>
-
+{{lastSelected}}
 
 <input type="button" (click)="play()" [attr.value]="(isPlaying && !isSuspended)?'Pause':'play'">
 <input type="button" (click)="stop()" value="Stop">

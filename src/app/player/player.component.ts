@@ -17,6 +17,7 @@ export class PlayerComponent  implements OnInit{
 
     @Output() timestampemit = new EventEmitter();
     @Input() track;
+    @Input() setTimeoutStart;
     public context: any;;
     public audioBuffer:any;
     public ReadlAudioBuffer: any;
@@ -27,6 +28,7 @@ export class PlayerComponent  implements OnInit{
     public audioLength: number = 0;
     public isSuspended: boolean = false;
     public timeOutId: any = [];
+    public lastSelected: any;
     constructor() { }
 
     ngOnInit() {
@@ -40,7 +42,7 @@ export class PlayerComponent  implements OnInit{
         this.loadAudio();
     }
     ngOnChanges(changes) {
-        if(changes.track.currentValue){
+        if(changes.track && changes.track.currentValue){
             this.track = changes.track.currentValue; 
             if(this.ReadlAudioBuffer) {
                 this.nowBufferingIndex = 0;
@@ -84,6 +86,9 @@ export class PlayerComponent  implements OnInit{
         this.source.connect(this.context.destination);
     }
     stop() {
+        console.log('stoped');
+        if(this.context.state =="suspended")
+            this.context.resume();
         this.source.stop();
         this.isPlaying = false;
         this.nowBufferingIndex = 0;
@@ -99,33 +104,36 @@ export class PlayerComponent  implements OnInit{
     starthightlighting(track) {
         track.obser.emit(track.track.time);
     }
-    highlight() {
-        for (let k = 0, len = this.track.length; k < len; k += 1) { 
-            let id = setTimeout(this.starthightlighting, this.track[k]['setTime']*1000,{track:this.track[k],index:k,obser:this.timestampemit,context:this.context});
+    highlight(startFrom) {
+        let k = startFrom;
+        let len = 0;
+        let offset = (startFrom==0)?0:this.track[startFrom]['setTime'];
+        for (k, len = this.track.length; k < len; k += 1) { 
+            let id = setTimeout(this.starthightlighting, (this.track[k]['setTime']-offset)*1000,{track:this.track[k],index:k,obser:this.timestampemit,context:this.context,lastsel:this.lastSelected});
             this.timeOutId.push(id);
         }
     }
     
     play() {
         if(this.isPlaying) {
+            console.log('insplying');
             if (this.isSuspended ==true) {
                 this.isSuspended = false;
                 this.context.resume();
-                this.highlight();
+                this.highlight(this.setTimeoutStart);
             } else {
                 this.isSuspended = true;
                 this.context.suspend();
+                console.log(this.context);
                 for(let index of this.timeOutId){
                     window.clearInterval(index);
                 }
             }
         } else {
-            this.highlight();
+            this.highlight(0);
             this.isPlaying = true;
             this.isSuspended = false;
             this.source.start();
-            
-            
         }
     }
 

@@ -1,5 +1,5 @@
 <p class="passage-audio" >
-    <app-player *ngIf="realdata" (timestampemit)="speechhightlight($event)" [track]="realdata"></app-player>
+    <app-player *ngIf="realdata" (timestampemit)="speechhightlight($event)" [track]="realdata" [setTimeoutStart]="lastSelected"></app-player>
 </p>
 <!--   -->
 <input type="button" value="Cut" (click)="cut();" *ngIf="dragStartIndex>0 && dragEndIndex>0 && !pasteBin">

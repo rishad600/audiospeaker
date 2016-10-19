@@ -21,7 +21,7 @@ export class AppComponent {
     public dragStartIndex:number;
     public dragEndIndex:number;
     public pasteBin:any;
-    
+    public lastSelected: any;
 
     constructor(public audioData: AudioDataService) {
         this.getAndArrageData();
@@ -80,12 +80,12 @@ export class AppComponent {
     }
 
     speechhightlight(time) {
+
         for (let i = 0, len = this.realdata.length; i < len; i += 1) { 
             if(this.realdata[i].time == time) {
+                this.lastSelected = i;
                 if(i>0)
                 this.realdata[i-1].read =false;
-                if(i>2)
-                this.realdata[i-2].read =false;
                 this.realdata[i].read = true;
                 break;
             }            
