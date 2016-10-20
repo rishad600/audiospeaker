@@ -1,3 +1,3 @@
-<span class="spanClass" [ngClass]="{'selected':data.hightlight,'audioSelected':data.read }"   *ngIf="data"  (click)="select();" (mousemove)="mousemove()" (mouseup)="mouseup()"  (mousedown)="mousedown();">
-  {{data.name}} 
+<span class="spanClass" id="{{index}}" contenteditable="true" [textContent]="data.name" (input)="data.name=$event.target.textContent" [ngClass]="{'selected':data.hightlight,'audioSelected':data.read }"   *ngIf="data"  (click)="select();" (mousemove)="mousemove()" (keyup)="contentEdited();" (mouseup)="mouseup()"  (mousedown)="mousedown();">
+{{model}}
 </span>

@@ -1,0 +1,6 @@
+Using text editor would not be a good idea. primary reason is that we are not having enough control over the text once the text are passed to the editor. It has its own intenals which will it very complicated for me to work on. 
+
+Each word is connected to a sound clip, and the whole sound is generated using these sound clips taken from the word. When we pass the text to the editor we will not be able to map it with the sound clip. 
+
+
+Lastly i did not see any good angular2 

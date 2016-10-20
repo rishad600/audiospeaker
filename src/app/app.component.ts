@@ -35,6 +35,13 @@ export class AppComponent {
         data.hightlight = !data.hightlight; 
         this.selection(0,1);//clear all selection
     }
+    selectAnotherWord($event) {
+        if($event.action =="remove") {
+            this.realdata.splice($event.index,1);
+            let elem = (Number($event.ind)).toFixed();
+            document.getElementById(elem).focus();
+        }
+    }
     
     draggedStart(e) {
         this.drag = true;
