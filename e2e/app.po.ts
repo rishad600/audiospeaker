@@ -1,4 +1,6 @@
-export class AudioeditorPage {
+import { browser, element, by } from 'protractor';
+
+export class AudioreadereditorPage {
   navigateTo() {
     return browser.get('/');
   }

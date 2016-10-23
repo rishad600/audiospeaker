@@ -1,126 +1,62 @@
-import { Component ,ViewChild,EventEmitter,Output,NgZone} from '@angular/core';
-import {AudioDataService} from './audio-data.service';
-import {WordComponent} from './word/word.component';
-import {PlayerComponent} from './player/player.component';
-import {ReadData} from './models/readData';
-import {Observable} from 'rxjs/Rx';
-
-
+import { Component,ViewChild,ElementRef,Renderer,NgZone} from '@angular/core';
+declare const Audio;
+declare const webkitAudioContext;
 @Component({
-  moduleId: module.id,
   selector: 'app-root',
-  templateUrl: 'app.component.html',
-  providers:[AudioDataService],
-  directives: [WordComponent,PlayerComponent],
-  styleUrls: ['app.component.css']
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+    title = 'app works!';
+    public player: any;
+    public context: any;
+    public analyser: any;
+    public canvas: any;
+    public canvasctx: any;
+    @ViewChild('audio') audio: ElementRef;
     
-    public realdata:Array<ReadData> = [];
-    public drag:boolean = false;
-    public dragStartIndex:number;
-    public dragEndIndex:number;
-    public pasteBin:any;
-    public lastSelected: any;
+    constructor(public renderer: Renderer,public ngZone: NgZone) {
+        this.player = new Audio();
+        this.player.src = 'http://localhost:4200/assets/song.mp3';
+        this.player.controls = true;
+    }
+    ngAfterViewInit() {
+        document.getElementById('audio').appendChild(this.player);
+        this.player.play();
+        this.context = new webkitAudioContext();
+        this.analyser = this.context.createAnalyser(); 
+        this.canvas = document.getElementById('analyser_render');
+        this.canvasctx = this.canvas.getContext('2d');
+        let source = this.context.createMediaElementSource(this.player); 
+        source.connect(this.analyser);
+        this.analyser.connect(this.context.destination);
+        this.frameLooper();
+    }
+    
+    frameLooper() {
+        this.ngZone.runOutsideAngular(() => {
+             requestAnimationFrame(() => {
+                let fbc_array = new Uint8Array(this.analyser.frequencyBinCount);
+                this.analyser.getByteFrequencyData(fbc_array);
+                this.canvasctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear the canvas
+                this.canvasctx.fillStyle = '#00CCFF'; // Color of the bars
+                let bars = this.canvas.width;
+                let bar_x;
+                let bar_width;
+                let bar_height;
 
-    constructor(public audioData: AudioDataService) {
-        this.getAndArrageData();
-    }
-    
-    returnNewArray() {
-         this.realdata = [];   
-    }
-    
-    clickEvent(data: ReadData) {
-        data.hightlight = !data.hightlight; 
-        this.selection(0,1);//clear all selection
-    }
-    selectAnotherWord($event) {
-        if($event.action =="remove") {
-            this.realdata.splice($event.index,1);
-            let elem = (Number($event.ind)).toFixed();
-            document.getElementById(elem).focus();
-        }
-    }
-    
-    draggedStart(e) {
-        this.drag = true;
-        this.dragStartIndex = e;
-    }
-    
-    draggedEnded(e) {
-       this.drag = false;
-        this.dragEndIndex = e;
-    }
-    
-    clear() {
-        this.dragEndIndex = this.dragStartIndex = 0;
-        this.selection(0,1);//clear all selection
-        this.pasteBin = undefined;
-    }
-    
-    selection(e,clear) {
-        if(this.drag==true || clear ==true) {    
-            for(let i=0;i<this.realdata.length;i++) 
-                if(i>this.dragStartIndex-1 && i< e)
-                    this.realdata[i].hightlight = true;
-                else
-                    this.realdata[i].hightlight = false;
-        }
-    }
-    
-    cut() {
-        let cliplength = this.dragEndIndex-this.dragStartIndex;
-        this.pasteBin = this.realdata.splice(this.dragStartIndex,cliplength);
-    }
-    
-    paste() {
-        for(let i=this.pasteBin.length-1;i>=0;i--)  {
-            this.realdata.splice(this.dragStartIndex+1,0,this.pasteBin[i]);
-        }
-        let time = 0;
-        for (let i = 1, len = this.realdata.length; i < len; i += 1) { 
-            time = time + Number(this.realdata[i-1].duration);
-            this.realdata[i].setTime  = Number(time);
-        }
-        this.realdata = [...this.realdata.slice(0, 1),this.realdata[1],...this.realdata.slice(2)]
+
+                for (var i = 0; i < bars; i++) {
+                    bar_x = i * 3;
+                    bar_width = 2;
+                    bar_height = -(fbc_array[i] / 2);
+                    //  fillRect( x, y, width, height ) // Explanation of the parameters below
+                   // console.log(bar_x, this.canvas.height, bar_width, bar_height);
+                    this.canvasctx.fillRect(bar_x, this.canvas.height, bar_width, bar_height);
+                }
+                this.frameLooper();
+             });
+        });
     }
 
-    speechhightlight(time) {
-
-        for (let i = 0, len = this.realdata.length; i < len; i += 1) { 
-            if(this.realdata[i].time == time) {
-                this.lastSelected = i;
-                if(i>0)
-                this.realdata[i-1].read =false;
-                this.realdata[i].read = true;
-                break;
-            }            
-        }   
-    }
-    insertBlankRow(name ,duration,time) {
-        this.createArray(new ReadData(name ,duration,time,false,false,time));
-    }
-
-    checkBlankAudio(prev,pres,fur) {
-        if(prev && fur) {
-            let preEndtime = +((+prev.time + +prev.duration).toFixed(3)) ;
-            if(+(+prev.time + +prev.duration).toFixed(3)!= +pres.time) {
-                let duration = (pres.time  - +preEndtime).toFixed(3);
-                this.insertBlankRow("",duration,preEndtime);    
-            }
-        } 
-        if(!prev) {
-            this.insertBlankRow("",pres.time,0);    
-        }
-    }
-    createArray(newrow) {
-        this.realdata = [...this.realdata,newrow];
-    }
-    getAndArrageData() {
-        for (let i = 0, len = this.audioData.audioData.words.length; i < len; i += 1) { 
-            this.checkBlankAudio(this.audioData.audioData.words[i-1],this.audioData.audioData.words[i],this.audioData.audioData.words[i+1]);     
-            this.createArray(new ReadData(this.audioData.audioData.words[i]['name'] ,this.audioData.audioData.words[i]['duration'],this.audioData.audioData.words[i]['time'],false,false,this.audioData.audioData.words[i]['time']));
-         }
-    }
 }

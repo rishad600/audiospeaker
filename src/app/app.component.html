@@ -1,17 +1,32 @@
-<p class="passage-audio" >
-    <app-player *ngIf="realdata" (timestampemit)="speechhightlight($event)" [track]="realdata" [setTimeoutStart]="lastSelected"></app-player>
-</p>
-<!--   -->
-<input type="button" value="Cut" (click)="cut();" *ngIf="dragStartIndex>0 && dragEndIndex>0 && !pasteBin">
-<input type="button" value="Clear Selection" (click)="clear();" *ngIf="dragStartIndex>0 && dragEndIndex>0">
-<input type="button" value="paste" (click)="paste();" *ngIf="pasteBin">
-{{currenttimeStamp}}
+<md-sidenav-layout>
+    <md-toolbar color="primary">
+        <md-icon><i class="material-icons icon-20">playlist_play</i>
+        </md-icon>Audio Editor
+    </md-toolbar>
+    <div class="app-content">
+        <md-card >
+            <div id="audio"></div>
+            <canvas id="analyser_render" ></canvas>
+        </md-card>
+    </div>
+    <div class="app-content">
+        <md-card>
+          <p>   
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+          </p>
+        </md-card>
+    </div>
+    <md-sidenav align="end" mode="side" opened>
+        <md-tab-group>
+            <md-tab>
+                <template md-tab-label>Audio</template>
+                <template md-tab-content></template>
+            </md-tab>
+            <md-tab>
+                <template md-tab-label>Download</template>
+                <template md-tab-content></template>
+            </md-tab>
+        </md-tab-group>
+    </md-sidenav>
 
-<div class="textholder" >
-start selection {{dragStartIndex}}
-end selection {{dragEndIndex}}
-    <p class="noselect" *ngIf="realdata">
-       <app-word  (selectAnotherWord)="selectAnotherWord($event)" [index]="i" (clickEvent)="clickEvent($event);" (selection)="selection(i)" (draggedEnded)="draggedEnded(i)" (draggedStart)="draggedStart(i)" *ngFor="let item of realdata; let i = index" [data]="item"> </app-word >
-    </p>
-
-</div>
+</md-sidenav-layout>

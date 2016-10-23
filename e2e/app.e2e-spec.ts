@@ -1,10 +1,10 @@
-import { AudioeditorPage } from './app.po';
+import { AudioreadereditorPage } from './app.po';
 
-describe('audioeditor App', function() {
-  let page: AudioeditorPage;
+describe('audioreadereditor App', function() {
+  let page: AudioreadereditorPage;
 
   beforeEach(() => {
-    page = new AudioeditorPage();
+    page = new AudioreadereditorPage();
   });
 
   it('should display message saying app works', () => {
