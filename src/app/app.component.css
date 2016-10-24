@@ -17,13 +17,12 @@ p{
 p.chosen{
     background-color: blue; 
 }
-.noselect {
-    padding: 0 1px;
-    cursor: text;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+/*::selection {
+    background : green;
+}*/
+.noselect{
+    height: auto;
+}
+.wordHolder{
+    display: flex;
 }
