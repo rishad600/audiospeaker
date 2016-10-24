@@ -35,7 +35,7 @@ export class PlayerComponent {
     ngOnChanges(changes) {
         if(this.audioBuffer) {
             if(changes.soundtimestamps.currentValue) {
-                this.nowBufferingIndex = 0;
+                this.stop();
                 this.reorderBuffer();
             }
         }
@@ -88,6 +88,15 @@ export class PlayerComponent {
         this.source.connect(this.analyser);
         this.source.buffer = this.PlayableBuffer;
         this.source.connect(this.context.destination);
+        console.log(this.context);
+    }
+    stop() {
+        this.nowBufferingIndex = 0;
+        try {
+            this.source.stop();
+        } catch(e) {
+            console.log(e);
+        }
     }
 
     play() {
