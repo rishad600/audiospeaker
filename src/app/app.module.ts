@@ -6,12 +6,14 @@ import { MaterialModule } from '@angular/material';
 import { AppComponent } from './app.component';
 import {WordComponent} from './word/word.component';
 import {PlayerComponent} from './player/player.component';
+import {VisualiserComponent} from './visualiser/visualiser.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     WordComponent,
-    PlayerComponent
+    PlayerComponent,
+    VisualiserComponent
   ],
   imports: [
     BrowserModule,
