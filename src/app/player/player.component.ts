@@ -35,6 +35,7 @@ export class PlayerComponent {
     ngOnChanges(changes) {
         if(this.audioBuffer) {
             if(changes.soundtimestamps.currentValue) {
+                this.nowBufferingIndex = 0;
                 this.reorderBuffer();
             }
         }
@@ -61,15 +62,22 @@ export class PlayerComponent {
     }
     
     createNewEmptyBuffer() {
-        let audioLength = this.getBufferLength();
+        let audioLength     = this.getBufferLength();
         this.PlayableBuffer = this.context.createBuffer(1, this.context.sampleRate*audioLength,this.context.sampleRate);
-        this.putDataIntoEmptyBuffer();
+        this.LooDataIntoEmptyBuffer();
     }
-
-    putDataIntoEmptyBuffer() {
+    pushToBuffer(index,time) {
+        let framestart =  (Number(this.context.sampleRate)* Number(time.time))|0;
+        let frameend =  (Number(this.context.sampleRate)*(Number(time.time) + Number(time.duration)))|0;
+        for (let i = framestart; i < frameend; i++) {
+            this.nowBuffering[this.nowBufferingIndex]  = this.audioBuffer[i];
+            this.nowBufferingIndex++;
+        }
+    }
+    LooDataIntoEmptyBuffer() {
         this.nowBuffering = this.PlayableBuffer.getChannelData(0);
-        for (let i = 0; i < this.context.sampleRate * 10; i++) {
-            this.nowBuffering[i] = Math.random() * 2 - 1;
+        for(let index in this.soundtimestamps) {
+            this.pushToBuffer(index,this.soundtimestamps[index]);
         }
         this.makeBufferSource();
     }
