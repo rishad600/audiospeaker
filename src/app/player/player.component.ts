@@ -52,11 +52,17 @@ export class PlayerComponent {
         request.send();
     }
     reorderBuffer() {
+        console.log('reordering buffer');
         this.createNewEmptyBuffer();
+    }
+    getBufferLength() {
+        let lastElement  = this.soundtimestamps[this.soundtimestamps.length-1];
+        return Math.ceil(Number(lastElement.time)+ Number(lastElement.duration));
     }
     
     createNewEmptyBuffer() {
-        this.PlayableBuffer = this.context.createBuffer(1, this.context.sampleRate*10,this.context.sampleRate);
+        let audioLength = this.getBufferLength();
+        this.PlayableBuffer = this.context.createBuffer(1, this.context.sampleRate*audioLength,this.context.sampleRate);
         this.putDataIntoEmptyBuffer();
     }
 
