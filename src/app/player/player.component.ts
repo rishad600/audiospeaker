@@ -17,15 +17,14 @@ export class PlayerComponent {
     public context;
     public audioBuffer: any;
     public nowBufferingIndex: number = 0;
+    public PlayableBuffer :any;
     public nowBuffering: any = [];
     public source: any;
     constructor() {
         this.context = new (window.AudioContext || window.webkitAudioContext)(); // define audio context
-        this.context.createAnalyser();
     }
 
     ngAfterViewInit() {
-
         this.loadAudio();
     }
 
@@ -36,25 +35,33 @@ export class PlayerComponent {
         request.onload = () => {
             this.context.decodeAudioData(request.response,(buffer) => {
                 this.audioBuffer  = buffer.getChannelData(0);   
-                this.pushDataToBuffer();
-
+                this.createNewEmptyBuffer();
             });
         }
         request.send();
     }
 
     
-    pushDataToBuffer() {
-        let myAudioBuffer = this.context.createBuffer(1, this.context.sampleRate*10,this.context.sampleRate);
-        let framestart =  this.context.sampleRate* 1;
-        let frameend =  this.context.sampleRate*200 + 200;
-        for (let i = framestart; i < frameend; i++) {
-            this.nowBuffering[this.nowBufferingIndex]  = this.audioBuffer[i];
-            this.nowBufferingIndex++;
+    createNewEmptyBuffer() {
+        this.PlayableBuffer = this.context.createBuffer(1, this.context.sampleRate*2,this.context.sampleRate);
+        this.putDataIntoEmptyBuffer();
+    }
+
+    putDataIntoEmptyBuffer() {
+        this.nowBuffering = this.PlayableBuffer.getChannelData(0);
+        for (let i = 0; i < this.context.sampleRate * 2.0; i++) {
+            this.nowBuffering[i] = Math.random() * 2 - 1;
         }
+        this.makeBufferSource();
+    }
+
+    makeBufferSource() {
         this.source = this.context.createBufferSource();
-        this.source.buffer = myAudioBuffer;
+        this.source.buffer = this.PlayableBuffer;
         this.source.connect(this.context.destination);
+    }
+
+    play() {
         this.source.start();
     }
 
