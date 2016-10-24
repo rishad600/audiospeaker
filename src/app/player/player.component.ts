@@ -15,6 +15,7 @@ declare const navigator:any;
 })
 export class PlayerComponent {
     @Input() audioUrl;
+    @Input() soundtimestamps;
     public context;
     public audioBuffer: any;
     public nowBufferingIndex: number = 0;
@@ -31,7 +32,13 @@ export class PlayerComponent {
     ngAfterViewInit() {
         this.loadAudio();
     }
-
+    ngOnChanges(changes) {
+        if(this.audioBuffer) {
+            if(changes.soundtimestamps.currentValue) {
+                this.reorderBuffer();
+            }
+        }
+    }
     loadAudio() {
         var request = new XMLHttpRequest();
         request.open('GET', this.audioUrl, true);
@@ -44,16 +51,18 @@ export class PlayerComponent {
         }
         request.send();
     }
-
+    reorderBuffer() {
+        this.createNewEmptyBuffer();
+    }
     
     createNewEmptyBuffer() {
-        this.PlayableBuffer = this.context.createBuffer(1, this.context.sampleRate*2,this.context.sampleRate);
+        this.PlayableBuffer = this.context.createBuffer(1, this.context.sampleRate*10,this.context.sampleRate);
         this.putDataIntoEmptyBuffer();
     }
 
     putDataIntoEmptyBuffer() {
         this.nowBuffering = this.PlayableBuffer.getChannelData(0);
-        for (let i = 0; i < this.context.sampleRate * 2.0; i++) {
+        for (let i = 0; i < this.context.sampleRate * 10; i++) {
             this.nowBuffering[i] = Math.random() * 2 - 1;
         }
         this.makeBufferSource();

@@ -3,7 +3,15 @@
         <md-icon><i class="material-icons icon-20">playlist_play</i>
         </md-icon>Audio Editor
     </md-toolbar>
-            <app-player [audioUrl]='music'></app-player>
+     <app-player *ngIf="realdata" (timestampemit)="speechhightlight($event)" [audioUrl]='music' [soundtimestamps]="realdata" ></app-player>
+     <div class="app-content">
+        <md-card >
+            <button md-raised-button color="primary" (click)="cut();" >Cut</button>
+            <button md-raised-button color="accent" (click)="paste();">Paste</button>
+            <button md-raised-button color="warn" >Record</button>
+        </md-card>
+    </div>
+
     <div class="app-content">
         <form autocomplete="off" >
         <md-card  *ngIf="realdata" class="wordHolder">

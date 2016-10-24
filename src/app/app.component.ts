@@ -20,7 +20,7 @@ export class AppComponent {
     public dragEndIndex:number;
     public pasteBin:any;
     public lastSelected: any;
-    public music:string = "./assets/Luke.2.1-Luke.2.20.mp3";
+    public music: string = "./assets/Luke.2.1-Luke.2.20.mp3";
     constructor(public audioData: AudioDataService) {
         this.getAndArrageData();
     }
@@ -120,7 +120,5 @@ export class AppComponent {
             this.createArray(new ReadData(this.audioData.audioData.words[i]['name'] ,this.audioData.audioData.words[i]['duration'],this.audioData.audioData.words[i]['time'],false,false,this.audioData.audioData.words[i]['time']));
          }
     }
-
-
 
 }
