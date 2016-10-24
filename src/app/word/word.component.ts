@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, EventEmitter,Output} from '@angular/core';
 
 @Component({
-  moduleId: module.id,
   selector: 'app-word',
   templateUrl: 'word.component.html',
   styleUrls: ['word.component.css']

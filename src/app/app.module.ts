@@ -4,10 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { MaterialModule } from '@angular/material';
 import { AppComponent } from './app.component';
+import {WordComponent} from './word/word.component';
+import {PlayerComponent} from './player/player.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    WordComponent,
+    PlayerComponent
   ],
   imports: [
     BrowserModule,
