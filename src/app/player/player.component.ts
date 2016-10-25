@@ -17,6 +17,7 @@ export class PlayerComponent {
     @Input() audioUrl;
     @Input() soundtimestamps;
     @Output() timestampemit = new EventEmitter();
+    @Input() setTimeoutStart;
     public context;
     public audioBuffer: any;
     public nowBufferingIndex: number = 0;
@@ -36,7 +37,7 @@ export class PlayerComponent {
     }
     ngOnChanges(changes) {
         if(this.audioBuffer) {
-            if(changes.soundtimestamps.currentValue) {
+            if(changes.soundtimestamps && changes.soundtimestamps.currentValue) {
                 this.stop();
                 this.reorderBuffer();
                 this.clearTimeOut();
@@ -121,8 +122,19 @@ export class PlayerComponent {
         }
     }
     play() {
+
         this.highlight(0);
-        this.source.start();    
+        this.source.start(); 
+
     }
+    pause() {
+        this.context.suspend();
+        this.clearTimeOut();
+    }
+    resume() {
+        this.context.resume();
+        this.highlight(this.setTimeoutStart);
+    }
+
   
 }
