@@ -79,6 +79,7 @@ export class AppComponent {
         for (let i = 1, len = this.realdata.length; i < len; i += 1) { 
             time = time + Number(this.realdata[i-1].duration);
             this.realdata[i].setTime  = Number(time);
+            this.realdata[i].read  = false;
         }
         this.realdata = [...this.realdata.slice(0, 1),this.realdata[1],...this.realdata.slice(2)]
     }

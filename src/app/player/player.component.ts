@@ -39,6 +39,7 @@ export class PlayerComponent {
             if(changes.soundtimestamps.currentValue) {
                 this.stop();
                 this.reorderBuffer();
+                this.clearTimeOut();
             }
         }
     }
@@ -93,18 +94,19 @@ export class PlayerComponent {
         console.log(this.context);
     }
     clearTimeOut() {
-        for(let time in this.timeOutId) {
+        for(let time of this.timeOutId) {
             window.clearInterval(time);
         }
+        this.timeOutId = [];
     }
     stop() {
         this.nowBufferingIndex = 0;
         try {
-            this.source.stop();
-            this.clearTimeOut()
+            this.source.stop();    
         } catch(e) {
             console.log(e);
         }
+        
     }
     starthightlighting(track) {
         track.obser.emit(track.track.time);
