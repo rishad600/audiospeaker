@@ -16,6 +16,7 @@ declare const navigator:any;
 export class PlayerComponent {
     @Input() audioUrl;
     @Input() soundtimestamps;
+    @Output() timestampemit = new EventEmitter();
     public context;
     public audioBuffer: any;
     public nowBufferingIndex: number = 0;
@@ -25,6 +26,7 @@ export class PlayerComponent {
     public analyser:any;
     public canvasctx:any;
     public canvas: any;
+    public timeOutId: any = [];
     constructor() {
         this.context = new (window.AudioContext || window.webkitAudioContext)(); // define audio context
     }
@@ -98,9 +100,21 @@ export class PlayerComponent {
             console.log(e);
         }
     }
-
+    starthightlighting(track) {
+        track.obser.emit(track.track.time);
+    }
+    highlight(startFrom) {
+        let k = startFrom;
+        let len = 0;
+        let offset = (startFrom==0)?0:this.soundtimestamps[startFrom]['setTime'];
+        for (k, len = this.soundtimestamps.length; k < len; k += 1) { 
+            let id = setTimeout(this.starthightlighting, (this.soundtimestamps[k]['setTime']-offset)*1000,{track:this.soundtimestamps[k],index:k,obser:this.timestampemit,context:this.context});
+            this.timeOutId.push(id);
+        }
+    }
     play() {
-        this.source.start();
+        this.highlight(0);
+        this.source.start();    
     }
   
 }
