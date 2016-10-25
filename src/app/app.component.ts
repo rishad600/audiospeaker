@@ -3,7 +3,9 @@ import {AudioDataService} from './audio-data.service';
 import {WordComponent} from './word/word.component';
 import {PlayerComponent} from './player/player.component';
 import {ReadData} from './models/readData';
+import { Http, Headers,Response,RequestOptions} from '@angular/http';
 import {Observable} from 'rxjs/Rx';
+
 
 
 @Component({
@@ -20,8 +22,9 @@ export class AppComponent {
     public dragEndIndex:number;
     public pasteBin:any;
     public lastSelected: any;
+    public recordings: any = [];
     public music: string = "./assets/Luke.2.1-Luke.2.20.mp3";
-    constructor(public audioData: AudioDataService) {
+    constructor(public audioData: AudioDataService,private http: Http) {
         this.getAndArrageData();
     }
     returnNewArray() {
@@ -44,12 +47,36 @@ export class AppComponent {
         this.drag = true;
         this.dragStartIndex = e;
     }
+    fileChange(event) {
+     let url ="https://api.speechmatics.com/v1.0/user/7889/jobs/?auth_token=MGJhYmE1ZDQtNzQ0My00ZTgxLWFiNGUtMTI4ZWQ1MDJkMTRj"
+    let fileList: FileList = event.target.files;
+        if(fileList.length > 0) {
+            let file: File = fileList[0];
+            let formData:FormData = new FormData();
+            formData.append('data_file', file, file.name);
+            formData.append('model', 'en-US');
+            let headers = new Headers();
+            headers.append('Content-Type', 'multipart/form-data');
+            headers.append('Accept', 'application/json');
+            let options = new RequestOptions({ headers: headers });
+            this.http.post(`${url}`, formData, options)
+                .map(res => res.json())
+                .catch(error => Observable.throw(error))
+                .subscribe(
+                    data => console.log('success'),
+                    error => console.log(error)
+                )
+        }
+    }
     
     draggedEnded(e) {
        this.drag = false;
         this.dragEndIndex = e;
     }
-    
+    pushtoRecording(data) {
+        console.log(data);
+        this.recordings.push(data);
+    }
     clear() {
         this.dragEndIndex = this.dragStartIndex = 0;
         this.selection(0,1);//clear all selection

@@ -4,7 +4,6 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {VisualiserComponent} from '../visualiser/visualiser.component';
 
 
-
 declare const Recorder: any;
 declare const window;
 declare const navigator:any;
@@ -17,6 +16,7 @@ export class PlayerComponent {
     @Input() audioUrl;
     @Input() soundtimestamps;
     @Output() timestampemit = new EventEmitter();
+    @Output() newrecording = new EventEmitter();
     @Input() setTimeoutStart;
     public context;
     public audioBuffer: any;
@@ -28,7 +28,10 @@ export class PlayerComponent {
     public canvasctx:any;
     public canvas: any;
     public timeOutId: any = [];
-    constructor() {
+    public rec: any;
+    public recordStatus: boolean  = false;
+    public recorderArray: any = [];
+    constructor(public sanitizer: DomSanitizer ) {
         this.context = new (window.AudioContext || window.webkitAudioContext)(); // define audio context
     }
 
@@ -120,6 +123,27 @@ export class PlayerComponent {
             let id = setTimeout(this.starthightlighting, (this.soundtimestamps[k]['setTime']-offset)*1000,{track:this.soundtimestamps[k],index:k,obser:this.timestampemit,context:this.context});
             this.timeOutId.push(id);
         }
+    }
+    record() {
+        this.rec = new Recorder(this.source);
+        this.rec.record();
+        this.recordStatus = true;
+    }
+
+    stopRecord() {
+        this.rec.stop();
+        this.recordStatus = false;
+        this.createDownloadLink();
+    }
+    createDownloadLink() {
+        this.rec.exportWAV((blob)=>{
+            console.log(blob);
+            let data = {
+                download: new Date().getTime()+".wav",
+                href: this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob))    
+            }
+            this.newrecording.emit(data)
+        })
     }
     play() {
 

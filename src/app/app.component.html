@@ -3,12 +3,11 @@
         <md-icon><i class="material-icons icon-20">playlist_play</i>
         </md-icon>Audio Editor
     </md-toolbar>
-     <app-player *ngIf="realdata" (timestampemit)="speechhightlight($event)"  [setTimeoutStart]="lastSelected" [audioUrl]='music' [soundtimestamps]="realdata" ></app-player>
+     <app-player *ngIf="realdata" (newrecording)="pushtoRecording($event)" (timestampemit)="speechhightlight($event)"  [setTimeoutStart]="lastSelected" [audioUrl]='music' [soundtimestamps]="realdata" ></app-player>
      <div class="app-content">
         <md-card >
             <button md-raised-button color="primary" (click)="cut();" >Cut</button>
             <button md-raised-button color="accent" (click)="paste();">Paste</button>
-            <button md-raised-button color="warn" >Record</button>
         </md-card>
     </div>
 
@@ -25,11 +24,23 @@
         <md-tab-group>
             <md-tab>
                 <template md-tab-label>Audio</template>
-                <template md-tab-content></template>
+                <template md-tab-content>
+                    <md-grid-list cols="1"  rowHeight="100px" [style.background]="'lightblue'">
+                        <md-grid-tile>
+                            <input type="file" (change)="fileChange($event)" placeholder="Upload file" accept=".mp3"/>
+                        </md-grid-tile>
+                    </md-grid-list>
+                </template>
             </md-tab>
             <md-tab>
                 <template md-tab-label>Download</template>
-                <template md-tab-content></template>
+                <template md-tab-content>
+                    <md-list *ngFor="let red of recordings" [style.background]="'lightblue'">
+                        <md-list-item>
+                            <a [href]="red.href" [download]="red.download" >Download</a>
+                        </md-list-item> 
+                    </md-list>
+                </template>
             </md-tab>
         </md-tab-group>
     </md-sidenav>
