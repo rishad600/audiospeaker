@@ -92,10 +92,16 @@ export class PlayerComponent {
         this.source.connect(this.context.destination);
         console.log(this.context);
     }
+    clearTimeOut() {
+        for(let time in this.timeOutId) {
+            window.clearInterval(time);
+        }
+    }
     stop() {
         this.nowBufferingIndex = 0;
         try {
             this.source.stop();
+            this.clearTimeOut()
         } catch(e) {
             console.log(e);
         }
