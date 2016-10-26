@@ -106,6 +106,7 @@ export class PlayerComponent {
     stop() {
         this.nowBufferingIndex = 0;
         try {
+            this.context.resume();
             this.source.stop();    
         } catch(e) {
             console.log(e);
@@ -146,10 +147,8 @@ export class PlayerComponent {
         })
     }
     play() {
-
         this.highlight(0);
         this.source.start(); 
-
     }
     pause() {
         this.context.suspend();
