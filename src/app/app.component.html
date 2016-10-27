@@ -25,23 +25,7 @@
             <md-tab>
                 <template md-tab-label>Audio</template>
                 <template md-tab-content>
-                    <form #upload enctype="multipart/form-data" method="post"   name="fileinfo">
-                        <md-grid-list cols="1"  rowHeight="100px" [style.background]="'lightblue'">
-                            <md-grid-tile>
-                                <input type="file" name="media" (change)="fileChange($event)" placeholder="Upload file" accept=".mp3"/>
-                            </md-grid-tile>
-                        </md-grid-list>
-                        <md-divider></md-divider>
-                        <h3 md-subheader>Audio Files</h3>
-                    <md-divider></md-divider>
-                        <md-list >
-                            <md-list-item class="listaudio" *ngFor="let red of audioRef|async">
-                                <md-icon md-list-avatar>note</md-icon>
-                                <h3 md-line> Audio </h3>
-                                <p md-line> {{red.mediaId}}</p>
-                            </md-list-item> 
-                        </md-list>
-                    </form>
+                    <app-listdownload></app-listdownload>
                 </template>
             </md-tab>
             <md-tab>

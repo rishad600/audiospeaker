@@ -8,7 +8,7 @@ import {WordComponent} from './word/word.component';
 import {PlayerComponent} from './player/player.component';
 import {VisualiserComponent} from './visualiser/visualiser.component';
 import { AngularFireModule } from 'angularfire2';
-
+import {ListdownloadComponent} from './listdownload/listdownload.component';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyCVuinX6esaVNRCrx5VIp9Uq5HRMF9ngLs",
@@ -18,13 +18,13 @@ export const firebaseConfig = {
   messagingSenderId: "747710759787"
 };
 
-
 @NgModule({
   declarations: [
     AppComponent,
     WordComponent,
     PlayerComponent,
-    VisualiserComponent
+    VisualiserComponent,
+    ListdownloadComponent
   ],
   imports: [
     BrowserModule,
