@@ -47,28 +47,47 @@ export class AppComponent {
         this.drag = true;
         this.dragStartIndex = e;
     }
+    
     fileChange(event) {
-     let url ="https://api.speechmatics.com/v1.0/user/7889/jobs/?auth_token=MGJhYmE1ZDQtNzQ0My00ZTgxLWFiNGUtMTI4ZWQ1MDJkMTRj"
+    let url ="https://apis.voicebase.com/v2-beta/media";
+    let headers = new Headers({ 'Accept': 'application/json' ,
+                                'Authorization':'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJlMTdlNDlhMC1jNDEwLTQ4MjAtOTg5ZS05YWJkMGI2ZGRiMTciLCJ1c2VySWQiOiJhdXRoMHw1ODBmOTFjN2ExYmMyY2MwNjZjYWEzYjciLCJvcmdhbml6YXRpb25JZCI6IjZkMzMwNmEwLWI2Y2ItMGYwYy1mMTcyLWVmMWY3YmJlNjE2ZCIsImVwaGVtZXJhbCI6ZmFsc2UsImlhdCI6MTQ3NzQ5NTM3MjMwMSwiaXNzIjoiaHR0cDovL3d3dy52b2ljZWJhc2UuY29tIn0.Xl07d9oevEqBpH0edSdG_mrdkMOzaSPW4LA0ktBfEGY'});
     let fileList: FileList = event.target.files;
         if(fileList.length > 0) {
             let file: File = fileList[0];
-            let formData:FormData = new FormData();
-            formData.append('data_file', file, file.name);
-            formData.append('model', 'en-US');
-            let headers = new Headers();
-            headers.append('Content-Type', 'multipart/form-data');
-            headers.append('Accept', 'application/json');
-            let options = new RequestOptions({ headers: headers });
-            this.http.post(`${url}`, formData, options)
-                .map(res => res.json())
-                .catch(error => Observable.throw(error))
-                .subscribe(
-                    data => console.log('success'),
-                    error => console.log(error)
-                )
+            this.rawpost(file);
         }
     }
-    
+    dataURItoBlob(dataURI) {
+        var binary = atob(dataURI.split(',')[1]);
+        var array = [];
+        for (var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+        }
+        return new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
+    }
+    rawpost(data:any) {
+        let path = 'https://apis.voicebase.com/v2-beta/media';
+        let form  = document.forms.namedItem("fileinfo");
+        
+        let Data = new FormData(form);
+        
+        return new Promise(function (resolve) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        resolve(xhr.response);
+                    }
+                    else {
+                    }
+                }
+            };
+            xhr.open('POST', path, true);
+            xhr.setRequestHeader('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJlMTdlNDlhMC1jNDEwLTQ4MjAtOTg5ZS05YWJkMGI2ZGRiMTciLCJ1c2VySWQiOiJhdXRoMHw1ODBmOTFjN2ExYmMyY2MwNjZjYWEzYjciLCJvcmdhbml6YXRpb25JZCI6IjZkMzMwNmEwLWI2Y2ItMGYwYy1mMTcyLWVmMWY3YmJlNjE2ZCIsImVwaGVtZXJhbCI6ZmFsc2UsImlhdCI6MTQ3NzQ5NTM3MjMwMSwiaXNzIjoiaHR0cDovL3d3dy52b2ljZWJhc2UuY29tIn0.Xl07d9oevEqBpH0edSdG_mrdkMOzaSPW4LA0ktBfEGY');
+            xhr.send(Data);
+        });
+    }
     draggedEnded(e) {
        this.drag = false;
         this.dragEndIndex = e;

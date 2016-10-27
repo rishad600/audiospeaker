@@ -25,11 +25,13 @@
             <md-tab>
                 <template md-tab-label>Audio</template>
                 <template md-tab-content>
-                    <md-grid-list cols="1"  rowHeight="100px" [style.background]="'lightblue'">
-                        <md-grid-tile>
-                            <input type="file" (change)="fileChange($event)" placeholder="Upload file" accept=".mp3"/>
-                        </md-grid-tile>
-                    </md-grid-list>
+                    <form #upload enctype="multipart/form-data" method="post"   name="fileinfo">
+                        <md-grid-list cols="1"  rowHeight="100px" [style.background]="'lightblue'">
+                            <md-grid-tile>
+                                <input type="file" name="media" (change)="fileChange($event)" placeholder="Upload file" accept=".mp3"/>
+                            </md-grid-tile>
+                        </md-grid-list>
+                    </form>
                 </template>
             </md-tab>
             <md-tab>
