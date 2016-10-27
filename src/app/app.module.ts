@@ -7,6 +7,17 @@ import { AppComponent } from './app.component';
 import {WordComponent} from './word/word.component';
 import {PlayerComponent} from './player/player.component';
 import {VisualiserComponent} from './visualiser/visualiser.component';
+import { AngularFireModule } from 'angularfire2';
+
+
+export const firebaseConfig = {
+  apiKey: "AIzaSyCVuinX6esaVNRCrx5VIp9Uq5HRMF9ngLs",
+  authDomain: "audioeditor-e565e.firebaseapp.com",
+  databaseURL: "https://audioeditor-e565e.firebaseio.com",
+  storageBucket: "audioeditor-e565e.appspot.com",
+  messagingSenderId: "747710759787"
+};
+
 
 @NgModule({
   declarations: [
@@ -17,6 +28,7 @@ import {VisualiserComponent} from './visualiser/visualiser.component';
   ],
   imports: [
     BrowserModule,
+    AngularFireModule.initializeApp(firebaseConfig),
     FormsModule,
     HttpModule,
     JsonpModule,
