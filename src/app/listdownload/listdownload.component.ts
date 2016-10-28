@@ -61,6 +61,51 @@ export class ListdownloadComponent {
             xhr.send(Data);
         });
     }
+    loadAudio(audio) {
+        this.getAudioJson(audio)
+            .then(res =>{
+                console.log(res);
+            })
+    }
+    getAudioJson(audio) {
+
+        let path = `https://apis.voicebase.com/v2-beta/media/${audio.mediaId}/transcripts/latest`;
+        return new Promise(function (res,rej) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        res(JSON.parse(xhr.response))
+                    }
+                    else {
+                         rej(xhr.response);    
+                    }
+                }
+            };
+            xhr.open('GET', path, true);
+            xhr.setRequestHeader('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJlMTdlNDlhMC1jNDEwLTQ4MjAtOTg5ZS05YWJkMGI2ZGRiMTciLCJ1c2VySWQiOiJhdXRoMHw1ODBmOTFjN2ExYmMyY2MwNjZjYWEzYjciLCJvcmdhbml6YXRpb25JZCI6IjZkMzMwNmEwLWI2Y2ItMGYwYy1mMTcyLWVmMWY3YmJlNjE2ZCIsImVwaGVtZXJhbCI6ZmFsc2UsImlhdCI6MTQ3NzQ5NTM3MjMwMSwiaXNzIjoiaHR0cDovL3d3dy52b2ljZWJhc2UuY29tIn0.Xl07d9oevEqBpH0edSdG_mrdkMOzaSPW4LA0ktBfEGY');
+            xhr.send();
+        });
+    }
+    checkStatus(audio) {
+        let path = `https://apis.voicebase.com/v2-beta/media/${audio.mediaId}/`;
+        return new Promise(function (res,rej) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        res(JSON.parse(xhr.response))
+                    }
+                    else {
+                         rej(xhr.response);    
+                    }
+                }
+            };
+            xhr.open('GET', path, true);
+            xhr.setRequestHeader('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJlMTdlNDlhMC1jNDEwLTQ4MjAtOTg5ZS05YWJkMGI2ZGRiMTciLCJ1c2VySWQiOiJhdXRoMHw1ODBmOTFjN2ExYmMyY2MwNjZjYWEzYjciLCJvcmdhbml6YXRpb25JZCI6IjZkMzMwNmEwLWI2Y2ItMGYwYy1mMTcyLWVmMWY3YmJlNjE2ZCIsImVwaGVtZXJhbCI6ZmFsc2UsImlhdCI6MTQ3NzQ5NTM3MjMwMSwiaXNzIjoiaHR0cDovL3d3dy52b2ljZWJhc2UuY29tIn0.Xl07d9oevEqBpH0edSdG_mrdkMOzaSPW4LA0ktBfEGY');
+            xhr.send();
+        });
+    }
     rawpost(data:any) {
         let path = 'https://apis.voicebase.com/v2-beta/media';
         let form  = document.forms.namedItem("fileinfo");
