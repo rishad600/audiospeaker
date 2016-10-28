@@ -31,12 +31,9 @@ export class PlayerComponent {
     public rec: any;
     public recordStatus: boolean  = false;
     public recorderArray: any = [];
+    public playing:boolean = false; 
     constructor(public sanitizer: DomSanitizer ) {
         this.context = new (window.AudioContext || window.webkitAudioContext)(); // define audio context
-    }
-
-    ngAfterViewInit() {
-        this.loadAudio();
     }
     ngOnChanges(changes) {
         if(this.audioBuffer) {
@@ -46,6 +43,11 @@ export class PlayerComponent {
                 this.clearTimeOut();
             }
         }
+        if(changes.audioUrl && changes.audioUrl.currentValue) {
+            console.log('audio ');
+            this.loadAudio();
+        }
+        
     }
     loadAudio() {
         var request = new XMLHttpRequest();
@@ -53,6 +55,7 @@ export class PlayerComponent {
         request.responseType = 'arraybuffer';
         request.onload = () => {
             this.context.decodeAudioData(request.response,(buffer) => {
+                console.log(buffer);
                 this.audioBuffer  = buffer.getChannelData(0);   
                 this.createNewEmptyBuffer();
             });
@@ -60,7 +63,6 @@ export class PlayerComponent {
         request.send();
     }
     reorderBuffer() {
-        console.log('reordering buffer');
         this.createNewEmptyBuffer();
     }
     getBufferLength() {
@@ -104,10 +106,13 @@ export class PlayerComponent {
         this.timeOutId = [];
     }
     stop() {
+        this.playing = false;
         this.nowBufferingIndex = 0;
         try {
             this.context.resume();
-            this.source.stop();    
+            this.source.stop();
+            this.reorderBuffer()
+            console.log('stoped');
         } catch(e) {
             console.log(e);
         }
@@ -147,6 +152,7 @@ export class PlayerComponent {
         })
     }
     play() {
+        this.playing = true;
         this.highlight(0);
         this.source.start(); 
     }

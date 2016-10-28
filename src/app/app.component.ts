@@ -5,7 +5,6 @@ import {PlayerComponent} from './player/player.component';
 import {ReadData} from './models/readData';
 import { Http, Headers,Response,RequestOptions} from '@angular/http';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
-import {ListdownloadComponent} from './listdownload/listdownload.component';
 import {Observable} from 'rxjs/Rx';
 
 @Component({
@@ -23,10 +22,9 @@ export class AppComponent {
     public pasteBin:any;
     public lastSelected: any;
     public recordings: any = [];
-    public music: string = "./assets/Luke.2.1-Luke.2.20.mp3";
+    public music: string = "./assets/audio.mp3";
     public audioRef: any;
     constructor(public audioData: AudioDataService,private http: Http,public af: AngularFire) {
-        console.log(this.af);
         this.audioRef = af.database.list('/audio');
         this.getAndArrageData();
     }
@@ -51,7 +49,51 @@ export class AppComponent {
         this.dragStartIndex = e;
     }
     
-    
+    fileChange(event) {
+        let url ="https://apis.voicebase.com/v2-beta/media";
+        let headers = new Headers({ 'Accept': 'application/json' ,
+                                    'Authorization':'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJlMTdlNDlhMC1jNDEwLTQ4MjAtOTg5ZS05YWJkMGI2ZGRiMTciLCJ1c2VySWQiOiJhdXRoMHw1ODBmOTFjN2ExYmMyY2MwNjZjYWEzYjciLCJvcmdhbml6YXRpb25JZCI6IjZkMzMwNmEwLWI2Y2ItMGYwYy1mMTcyLWVmMWY3YmJlNjE2ZCIsImVwaGVtZXJhbCI6ZmFsc2UsImlhdCI6MTQ3NzQ5NTM3MjMwMSwiaXNzIjoiaHR0cDovL3d3dy52b2ljZWJhc2UuY29tIn0.Xl07d9oevEqBpH0edSdG_mrdkMOzaSPW4LA0ktBfEGY'});
+        let fileList: FileList = event.target.files;
+            if(fileList.length > 0) {
+                let file: File = fileList[0];
+                this.rawpost(file)
+                    .then(res => {
+                        this.saveFileDetailsFirebase(res);
+                    },(err) => {
+
+                    })
+            }
+    }
+    dataURItoBlob(dataURI) {
+        var binary = atob(dataURI.split(',')[1]);
+        var array = [];
+        for (var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+        }
+        return new Blob([new Uint8Array(array)], { type: 'image/jpeg' });
+    }
+    rawpost(data:any) {
+
+        let path = 'https://apis.voicebase.com/v2-beta/media';
+        let form  = document.forms.namedItem("fileinfo");
+        let Data = new FormData(form);
+        return new Promise(function (res,rej) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        res(JSON.parse(xhr.response))
+                    }
+                    else {
+                         rej(xhr.response);    
+                    }
+                }
+            };
+            xhr.open('POST', path, true);
+            xhr.setRequestHeader('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJlMTdlNDlhMC1jNDEwLTQ4MjAtOTg5ZS05YWJkMGI2ZGRiMTciLCJ1c2VySWQiOiJhdXRoMHw1ODBmOTFjN2ExYmMyY2MwNjZjYWEzYjciLCJvcmdhbml6YXRpb25JZCI6IjZkMzMwNmEwLWI2Y2ItMGYwYy1mMTcyLWVmMWY3YmJlNjE2ZCIsImVwaGVtZXJhbCI6ZmFsc2UsImlhdCI6MTQ3NzQ5NTM3MjMwMSwiaXNzIjoiaHR0cDovL3d3dy52b2ljZWJhc2UuY29tIn0.Xl07d9oevEqBpH0edSdG_mrdkMOzaSPW4LA0ktBfEGY');
+            xhr.send(Data);
+        });
+    }
     saveFileDetailsFirebase(res) {
         this.audioRef.push(res);
     }
