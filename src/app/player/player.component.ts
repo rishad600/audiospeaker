@@ -32,23 +32,23 @@ export class PlayerComponent {
     public recordStatus: boolean  = false;
     public recorderArray: any = [];
     public playing:boolean = false; 
+    public recording: boolean = false;
     constructor(public sanitizer: DomSanitizer ) {
         this.context = new (window.AudioContext || window.webkitAudioContext)(); // define audio context
     }
     ngOnChanges(changes) {
         if(this.audioBuffer) {
             if(changes.soundtimestamps && changes.soundtimestamps.currentValue) {
-                this.stop();
                 this.reorderBuffer();
                 this.clearTimeOut();
             }
         }
         if(changes.audioUrl && changes.audioUrl.currentValue) {
-            console.log('audio ');
             this.loadAudio();
         }
         
     }
+
     loadAudio() {
         var request = new XMLHttpRequest();
         request.open('GET', this.audioUrl, true);
@@ -63,6 +63,7 @@ export class PlayerComponent {
         request.send();
     }
     reorderBuffer() {
+        this.stop();
         this.createNewEmptyBuffer();
     }
     getBufferLength() {
@@ -73,7 +74,7 @@ export class PlayerComponent {
     createNewEmptyBuffer() {
         let audioLength     = this.getBufferLength();
         this.PlayableBuffer = this.context.createBuffer(1, this.context.sampleRate*audioLength,this.context.sampleRate);
-        this.LooDataIntoEmptyBuffer();
+        this.LoadDataIntoEmptyBuffer();
     }
     pushToBuffer(index,time) {
         let framestart =  (Number(this.context.sampleRate)* Number(time.time))|0;
@@ -83,7 +84,7 @@ export class PlayerComponent {
             this.nowBufferingIndex++;
         }
     }
-    LooDataIntoEmptyBuffer() {
+    LoadDataIntoEmptyBuffer() {
         this.nowBuffering = this.PlayableBuffer.getChannelData(0);
         for(let index in this.soundtimestamps) {
             this.pushToBuffer(index,this.soundtimestamps[index]);
@@ -111,7 +112,7 @@ export class PlayerComponent {
         try {
             this.context.resume();
             this.source.stop();
-            this.reorderBuffer()
+            this.clearTimeOut();
             console.log('stoped');
         } catch(e) {
             console.log(e);
@@ -131,6 +132,7 @@ export class PlayerComponent {
         }
     }
     record() {
+        this.recording = true;
         this.rec = new Recorder(this.source);
         this.rec.record();
         this.recordStatus = true;
@@ -140,10 +142,10 @@ export class PlayerComponent {
         this.rec.stop();
         this.recordStatus = false;
         this.createDownloadLink();
+        this.recording = false;
     }
     createDownloadLink() {
         this.rec.exportWAV((blob)=>{
-            console.log(blob);
             let data = {
                 download: new Date().getTime()+".wav",
                 href: this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob))    

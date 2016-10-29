@@ -14,7 +14,7 @@ import {Observable} from 'rxjs/Rx';
   styleUrls: ['app.component.css']
 })
 export class AppComponent {
-    
+    @ViewChild(PlayerComponent) PlayerComponent:PlayerComponent;
     public realdata:Array<ReadData> = [];
     public drag:boolean = false;
     public dragStartIndex:number;
@@ -138,7 +138,8 @@ export class AppComponent {
             this.realdata[i].setTime  = Number(time);
             this.realdata[i].read  = false;
         }
-        this.realdata = [...this.realdata.slice(0, 1),this.realdata[1],...this.realdata.slice(2)]
+        this.realdata = [...this.realdata.slice(0, 1),this.realdata[1],...this.realdata.slice(2)];
+        console.log(this.PlayerComponent);
     }
 
     speechhightlight(time) {
