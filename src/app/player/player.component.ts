@@ -109,7 +109,6 @@ export class PlayerComponent {
         this.playing = false;
         this.nowBufferingIndex = 0;
         try {
-            this.context.resume();
             this.source.stop();
             this.reorderBuffer();
             this.clearTimeOut();
