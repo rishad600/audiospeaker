@@ -39,7 +39,7 @@ export class PlayerComponent {
     ngOnChanges(changes) {
         if(this.audioBuffer) {
             if(changes.soundtimestamps && changes.soundtimestamps.currentValue) {
-                this.reorderBuffer();
+                this.stop();
                 this.clearTimeOut();
             }
         }
@@ -63,7 +63,6 @@ export class PlayerComponent {
         request.send();
     }
     reorderBuffer() {
-        this.stop();
         this.createNewEmptyBuffer();
     }
     getBufferLength() {
@@ -112,6 +111,7 @@ export class PlayerComponent {
         try {
             this.context.resume();
             this.source.stop();
+            this.reorderBuffer();
             this.clearTimeOut();
             console.log('stoped');
         } catch(e) {
