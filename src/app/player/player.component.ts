@@ -39,6 +39,7 @@ export class PlayerComponent {
     ngOnChanges(changes) {
         if(this.audioBuffer) {
             if(changes.soundtimestamps && changes.soundtimestamps.currentValue) {
+                this.soundtimestamps = changes.soundtimestamps.currentValue;
                 this.stop();
                 this.clearTimeOut();
             }
@@ -55,7 +56,6 @@ export class PlayerComponent {
         request.responseType = 'arraybuffer';
         request.onload = () => {
             this.context.decodeAudioData(request.response,(buffer) => {
-                console.log(buffer);
                 this.audioBuffer  = buffer.getChannelData(0);   
                 this.createNewEmptyBuffer();
             });
